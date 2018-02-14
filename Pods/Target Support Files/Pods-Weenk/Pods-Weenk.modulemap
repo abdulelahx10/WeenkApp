@@ -1,0 +1,6 @@
+framework module Pods_Weenk {
+  umbrella header "Pods-Weenk-umbrella.h"
+
+  export *
+  module * { export * }
+}
