@@ -9,10 +9,9 @@
 /* Begin PBXBuildFile section */
 		5B14587520318DF000B58BA4 /* FriendsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B14587420318DF000B58BA4 /* FriendsViewController.swift */; };
 		5B1458772034076B00B58BA4 /* SocialSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1458762034076B00B58BA4 /* SocialSystem.swift */; };
-		5B1458792034087C00B58BA4 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1458782034087C00B58BA4 /* UserData.swift */; };
+		5B1458792034087C00B58BA4 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1458782034087C00B58BA4 /* Data.swift */; };
 		5B14587C20345C8E00B58BA4 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B14587A20345C8E00B58BA4 /* UserCell.swift */; };
 		5B14587D20345C8E00B58BA4 /* UserCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B14587B20345C8E00B58BA4 /* UserCell.xib */; };
-		5B14587F2034B3AA00B58BA4 /* GroupData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B14587E2034B3AA00B58BA4 /* GroupData.swift */; };
 		5B25D746202613280065282B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B25D745202613280065282B /* AppDelegate.swift */; };
 		5B25D748202613280065282B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B25D747202613280065282B /* ViewController.swift */; };
 		5B25D74B202613280065282B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B25D749202613280065282B /* Main.storyboard */; };
@@ -29,10 +28,9 @@
 		56355E1779D474FA94D4AEC2 /* Pods-Weenk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Weenk.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Weenk/Pods-Weenk.debug.xcconfig"; sourceTree = "<group>"; };
 		5B14587420318DF000B58BA4 /* FriendsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsViewController.swift; sourceTree = "<group>"; };
 		5B1458762034076B00B58BA4 /* SocialSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialSystem.swift; sourceTree = "<group>"; };
-		5B1458782034087C00B58BA4 /* UserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		5B1458782034087C00B58BA4 /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		5B14587A20345C8E00B58BA4 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		5B14587B20345C8E00B58BA4 /* UserCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserCell.xib; sourceTree = "<group>"; };
-		5B14587E2034B3AA00B58BA4 /* GroupData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupData.swift; sourceTree = "<group>"; };
 		5B25D742202613280065282B /* Weenk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weenk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B25D745202613280065282B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5B25D747202613280065282B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -85,8 +83,7 @@
 				5BBC6456202F18B100D7FA3B /* SignInViewController.swift */,
 				5B1458762034076B00B58BA4 /* SocialSystem.swift */,
 				5B14587420318DF000B58BA4 /* FriendsViewController.swift */,
-				5B1458782034087C00B58BA4 /* UserData.swift */,
-				5B14587E2034B3AA00B58BA4 /* GroupData.swift */,
+				5B1458782034087C00B58BA4 /* Data.swift */,
 				5B14587A20345C8E00B58BA4 /* UserCell.swift */,
 				5B14587B20345C8E00B58BA4 /* UserCell.xib */,
 				5BBC6450202DB84800D7FA3B /* Supporting Files */,
@@ -316,14 +313,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B14587C20345C8E00B58BA4 /* UserCell.swift in Sources */,
-				5B14587F2034B3AA00B58BA4 /* GroupData.swift in Sources */,
 				5B25D748202613280065282B /* ViewController.swift in Sources */,
 				5B14587520318DF000B58BA4 /* FriendsViewController.swift in Sources */,
 				5B25D746202613280065282B /* AppDelegate.swift in Sources */,
 				5BBC6457202F18B100D7FA3B /* SignInViewController.swift in Sources */,
 				5B1458772034076B00B58BA4 /* SocialSystem.swift in Sources */,
 				5BC944A7202F8F2A00B29D0A /* ARViewController.swift in Sources */,
-				5B1458792034087C00B58BA4 /* UserData.swift in Sources */,
+				5B1458792034087C00B58BA4 /* Data.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
