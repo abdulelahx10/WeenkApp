@@ -13,12 +13,14 @@ class UserData {
     var name: String!
     var photoURL: String!
     var id: String!
+    var chatId : String!
     
-    init(userEmail: String, userName: String, userPhotoURL: String, userID: String) {
+    init(userEmail: String, userName: String, userPhotoURL: String, userID: String, chatID: String) {
         self.email = userEmail
         self.name = userName
         self.photoURL = userPhotoURL
         self.id = userID
+        self.chatId = chatID
     }
     
 }
@@ -29,18 +31,21 @@ class GroupData {
     var groupName: String!
     var id: String!
     var adminId: String!
+    var chatId: String!
     var groupdMembersList = [UserData]()
     
     
-    init(groupName: String, id: String, adminId: String) {
+    init(groupName: String, id: String, adminId: String, chatId: String) {
         self.groupName = groupName
         self.id = id
         self.adminId = adminId
+        self.chatId = chatId
     }
     
 }
 
 // chat class
+// TODO most likely wont need the class maybe remove later
 class ChatData {
     
     var name: String!

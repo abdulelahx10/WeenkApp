@@ -63,7 +63,7 @@ class SocialSystem {
             let name = snapshot.childSnapshot(forPath: "name").value as! String
             let photoURL = snapshot.childSnapshot(forPath: "photoURL").value as! String
             let id = snapshot.key
-            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id))
+            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id, chatID: ""))
         })
     }
     /** Gets the User object for the specified user id */
@@ -73,7 +73,7 @@ class SocialSystem {
             let name = snapshot.childSnapshot(forPath: "name").value as! String
             let photoURL = snapshot.childSnapshot(forPath: "photoURL").value as! String
             let id = snapshot.key
-            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id))
+            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id, chatID: ""))
             
         })
     }
@@ -82,8 +82,9 @@ class SocialSystem {
         GROUPS_REF.child(groupID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let adminId = snapshot.childSnapshot(forPath: "admin").value as! String
             let name = snapshot.childSnapshot(forPath: "groupName").value as! String
+            let chatId = snapshot.childSnapshot(forPath: "chatId").value as! String
             let id = snapshot.key
-            completion(GroupData(groupName: name, id: id, adminId: adminId))
+            completion(GroupData(groupName: name, id: id, adminId: adminId, chatId: chatId))
             
         })
     }
@@ -97,7 +98,7 @@ class SocialSystem {
         })
     }
     /** Gets the message object for the specified message id */
-    func getMessage(_ chatID: String, messageID: String, completion: @escaping (MessageData) -> Void) {
+    func getMessage(_ chatID: String, _ messageID: String, completion: @escaping (MessageData) -> Void) {
         CHATS_REF.child(chatID).child(messageID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let sender = snapshot.childSnapshot(forPath: "sender").value as! String
             let message = snapshot.childSnapshot(forPath: "message").value as! String
@@ -108,14 +109,16 @@ class SocialSystem {
         })
     }
     
-    // MARK: - Request System Functions
+    // MARK: - System Functions
     
     /** Create a Group and make current user the admin */
     func createGroup(_ groupName: String) {
         let ref = GROUPS_REF.childByAutoId()
         ref.child("groupName").setValue(groupName)
         ref.child("admin").setValue(CURRENT_USER_ID)
+        ref.child("chatId").setValue(ref.key)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
+        CHATS_REF.child(ref.key)
     }
     
     /** Sends a friend request to the user with the specified id */
@@ -128,17 +131,12 @@ class SocialSystem {
         USERS_REF.child(userID).child("groupRequests").child(groupID).setValue(true)
     }
     
-    /** Unfriends the user with the specified id */
-    func removeFriend(_ userID: String) {
-        CURRENT_USER_REF.child("friends").child(userID).removeValue()
-        USERS_REF.child(userID).child("friends").child(CURRENT_USER_ID).removeValue()
-    }
-    
     /** Accepts a friend request from the user with the specified id */
     func acceptFriendRequest(_ userID: String) {
+        let chatId = CHATS_REF.childByAutoId().key
         CURRENT_USER_REF.child("friendRequests").child(userID).removeValue()
-        CURRENT_USER_REF.child("friends").child(userID).setValue(true)
-        USERS_REF.child(userID).child("friends").child(CURRENT_USER_ID).setValue(true)
+        CURRENT_USER_REF.child("friends").child(userID).setValue(chatId)
+        USERS_REF.child(userID).child("friends").child(CURRENT_USER_ID).setValue(chatId)
         USERS_REF.child(userID).child("friendRequests").child(CURRENT_USER_ID).removeValue()
     }
     
@@ -146,9 +144,39 @@ class SocialSystem {
     func acceptGroupRequest(_ groupID: String) {
         CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
         CURRENT_USER_REF.child("groups").child(groupID).setValue(true)
+        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).setValue(true)
     }
     
-    // TODO send message
+    /** Unfriends the user with the specified id */
+    func removeFriend(_ userID: String) {
+        CURRENT_USER_REF.child("friends").child(userID).removeValue()
+        USERS_REF.child(userID).child("friends").child(CURRENT_USER_ID).removeValue()
+    }
+    
+    /** remove the user with the specified id from the group with specified id */
+    func removeUserFromGroup(_ userID: String, _ groupID: String) {
+        GROUPS_REF.child(groupID).child("members").child(groupID).removeValue()
+        USERS_REF.child(userID).child("groups").child(groupID).removeValue()
+    }
+    
+    /** send message to the given chat ID*/
+    func sendMessageTo(_ chatID: String, message: String) {
+        let ref = CHATS_REF.child(chatID).childByAutoId()
+        ref.child("message").setValue(message)
+        let name = CURRENT_USER_REF.value(forKey: "name") as! String
+        ref.child("sender").setValue(name)// TODO maybe change to sender ID insted of name
+        // get the current date and time
+        let currentDateTime = Date()
+        
+        // initialize the date formatter and set the style
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.dateStyle = .short
+        
+        // get the date time String from the date object
+        let date = formatter.string(from: currentDateTime)
+        ref.child("date").setValue(date)
+    }
     
     
     // MARK: - All users
@@ -164,7 +192,7 @@ class SocialSystem {
                 let name = child.childSnapshot(forPath: "name").value as! String
                 let photoURL = child.childSnapshot(forPath: "photoURL").value as! String
                 if email != Auth.auth().currentUser?.email! {
-                    self.userList.append(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: child.key))
+                    self.userList.append(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: child.key, chatID: ""))
                 }
             }
             update()
@@ -187,6 +215,7 @@ class SocialSystem {
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
                 self.getUser(id, completion: { (user) in
+                    user.chatId = snapshot.childSnapshot(forPath: id).value as! String
                     self.friendList.append(user)
                     update()
                 })
@@ -311,9 +340,31 @@ class SocialSystem {
         CURRENT_USER_GROUP_REQUESTS_REF.removeAllObservers()
     }
     
-    // TODO add observer to chats and messages
     
+    // MARK: - All messages from chat ID
+    /** The list of all messages from chat ID. */
+    var messagesList = [MessageData]()
+    /** Adds a message observer. The completion function will run every time this list changes, allowing you
+     to update your UI. */
+    func addMessageObserver(_ chatID: String, update: @escaping () -> Void) {
+        CHATS_REF.child(chatID).observe(DataEventType.value, with: { (snapshot) in
+            self.messagesList.removeAll()
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let id = child.key
+                self.getMessage(chatID, id, completion: { (message) in
+                    self.messagesList.append(message)
+                    update()
+                })
+            }
+            // If there are no children, run completion here instead
+            if snapshot.childrenCount == 0 {
+                update()
+            }
+        })
+    }
+    /** Removes the message request observer. This should be done when leaving the view that uses the observer. */
+    func removeMessageObserver() {
+        CHATS_REF.removeAllObservers()
+    }
 }
-
-
 

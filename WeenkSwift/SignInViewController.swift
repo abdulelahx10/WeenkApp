@@ -36,8 +36,8 @@ class SignInViewController: UIViewController {
                 self.ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
                     if !snapshot.hasChild((user?.uid)!){
                         self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName) // TODO fix if crash
-                        self.ref.child("users").child((user?.uid)!).child("email").setValue(user?.email)
-                        self.ref.child("users").child((user?.uid)!).child("photoURL").setValue(user?.photoURL?.absoluteString)
+                        self.ref.child("users").child(user!.uid).child("email").setValue(user?.email)
+                        self.ref.child("users").child(user!.uid).child("photoURL").setValue(user?.photoURL?.absoluteString)
                     }
                 })
                 self.performSegue(withIdentifier: "signedIn", sender: self)
