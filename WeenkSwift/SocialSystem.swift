@@ -217,9 +217,9 @@ class SocialSystem {
                 let id = child.key
                 if email != Auth.auth().currentUser?.email! {
                     self.getUser(id, completion: { (user) in
-                        if child.childSnapshot(forPath: "friends").hasChild(self.CURRENT_USER_ID){
+                        if child.childSnapshot(forPath: "friends").exists() && child.childSnapshot(forPath: "friends").hasChild(self.CURRENT_USER_ID){
                             user.isFriend = true
-                        } else if child.childSnapshot(forPath: "friendRequests").hasChild(self.CURRENT_USER_ID){
+                        } else if child.childSnapshot(forPath: "friendRequests").exists() && child.childSnapshot(forPath: "friendRequests").hasChild(self.CURRENT_USER_ID){
                             user.isFriendRequested = true
                         }
                         self.searchedUserList.append(user)
@@ -266,9 +266,9 @@ class SocialSystem {
                 let id = child.key
                 self.getUser(id, completion: { (user) in
                     user.chatId = snapshot.childSnapshot(forPath: id).value as! String
-                    if child.childSnapshot(forPath: "groups").hasChild(groupID){
+                    if child.childSnapshot(forPath: "groups").exists() && child.childSnapshot(forPath: "groups").hasChild(groupID){
                         user.isInThisGroup = true
-                    } else if child.childSnapshot(forPath: "groupRequests").hasChild(groupID){
+                    } else if child.childSnapshot(forPath: "groupRequests").exists() && child.childSnapshot(forPath: "groupRequests").hasChild(groupID){
                         user.isInThisGroupRequested = true
                     }
                     self.friendList.append(user)
