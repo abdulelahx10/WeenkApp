@@ -63,7 +63,7 @@ class SocialSystem {
             let name = snapshot.childSnapshot(forPath: "name").value as! String
             let photoURL = snapshot.childSnapshot(forPath: "photoURL").value as! String
             let id = snapshot.key
-            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id, chatID: ""))
+            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id))
         })
     }
     /** Gets the User object for the specified user id */
@@ -73,7 +73,7 @@ class SocialSystem {
             let name = snapshot.childSnapshot(forPath: "name").value as! String
             let photoURL = snapshot.childSnapshot(forPath: "photoURL").value as! String
             let id = snapshot.key
-            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id, chatID: ""))
+            completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id))
             
         })
     }
@@ -112,7 +112,7 @@ class SocialSystem {
     // MARK: - System Functions
     
     /** Create a Group and make current user the admin */
-    func createGroup(_ groupName: String) {
+    func createGroup(WithGroupName groupName: String) {
         let ref = GROUPS_REF.childByAutoId()
         ref.child("groupName").setValue(groupName)
         ref.child("admin").setValue(CURRENT_USER_ID)
@@ -122,17 +122,17 @@ class SocialSystem {
     }
     
     /** Sends a friend request to the user with the specified id */
-    func sendRequestToUser(_ userID: String) {
+    func sendFriendRequest(ToUserID userID: String) {
         USERS_REF.child(userID).child("friendRequests").child(CURRENT_USER_ID).setValue(true)
     }
     
     /** Sends a group request with given groupID to the user with the specified id */
-    func sendGroupRequestToUser(_ groupID: String, userID: String) {
+    func sendGroupRequest(ToUserID groupID: String, userID: String) {
         USERS_REF.child(userID).child("groupRequests").child(groupID).setValue(true)
     }
     
     /** Accepts a friend request from the user with the specified id */
-    func acceptFriendRequest(_ userID: String) {
+    func acceptFriendRequest(FromUserID userID: String) {
         let chatId = CHATS_REF.childByAutoId().key
         CURRENT_USER_REF.child("friendRequests").child(userID).removeValue()
         CURRENT_USER_REF.child("friends").child(userID).setValue(chatId)
@@ -141,26 +141,26 @@ class SocialSystem {
     }
     
     /** Accepts a group request with given id*/
-    func acceptGroupRequest(_ groupID: String) {
+    func acceptGroupRequest(FromGroupID groupID: String) {
         CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
         CURRENT_USER_REF.child("groups").child(groupID).setValue(true)
         GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).setValue(true)
     }
     
     /** Unfriends the user with the specified id */
-    func removeFriend(_ userID: String) {
+    func removeFriend(WithUserID userID: String) {
         CURRENT_USER_REF.child("friends").child(userID).removeValue()
         USERS_REF.child(userID).child("friends").child(CURRENT_USER_ID).removeValue()
     }
     
     /** remove the user with the specified id from the group with specified id */
-    func removeUserFromGroup(_ userID: String, _ groupID: String) {
+    func removeUserFromGroup(WithUserID userID: String, FromGroupID groupID: String) {
         GROUPS_REF.child(groupID).child("members").child(groupID).removeValue()
         USERS_REF.child(userID).child("groups").child(groupID).removeValue()
     }
     
     /** send message to the given chat ID*/
-    func sendMessageTo(_ chatID: String, message: String) {
+    func sendMessage(ToChatID chatID: String,WithTheMessage message: String) {
         let ref = CHATS_REF.child(chatID).childByAutoId()
         ref.child("message").setValue(message)
         let name = CURRENT_USER_REF.value(forKey: "name") as! String
@@ -192,7 +192,7 @@ class SocialSystem {
                 let name = child.childSnapshot(forPath: "name").value as! String
                 let photoURL = child.childSnapshot(forPath: "photoURL").value as! String
                 if email != Auth.auth().currentUser?.email! {
-                    self.userList.append(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: child.key, chatID: ""))
+                    self.userList.append(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: child.key))
                 }
             }
             update()
@@ -200,6 +200,37 @@ class SocialSystem {
     }
     /** Removes the user observer. This should be done when leaving the view that uses the observer. */
     func removeUserObserver() {
+        USERS_REF.removeAllObservers()
+    }
+    
+    
+    // MARK: - All users
+    /** The list of searched users */
+    var searchedUserList = [UserData]()
+    /** Adds a searched user observer. The completion function will run every time this list changes, allowing you
+     to update your UI. */
+    func addSearchUserObserver(WithName name: String, update: @escaping () -> Void) {
+        SocialSystem.system.USERS_REF.queryOrdered(byChild: "name").queryStarting(atValue: name).queryEnding(atValue: name+"\u{f8ff}").observe(DataEventType.value, with: { (snapshot) in
+            self.searchedUserList.removeAll()
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let email = child.childSnapshot(forPath: "email").value as! String
+                let id = child.key
+                if email != Auth.auth().currentUser?.email! {
+                    self.getUser(id, completion: { (user) in
+                        if child.childSnapshot(forPath: "friends").hasChild(self.CURRENT_USER_ID){
+                            user.isFriend = true
+                        } else if child.childSnapshot(forPath: "friendRequests").hasChild(self.CURRENT_USER_ID){
+                            user.isFriendRequested = true
+                        }
+                        self.searchedUserList.append(user)
+                    })
+                }
+            }
+            update()
+        })
+    }
+    /** Removes the user observer. This should be done when leaving the view that uses the observer. */
+    func removeSearchUserObserver() {
         USERS_REF.removeAllObservers()
     }
     
@@ -216,6 +247,30 @@ class SocialSystem {
                 let id = child.key
                 self.getUser(id, completion: { (user) in
                     user.chatId = snapshot.childSnapshot(forPath: id).value as! String
+                    self.friendList.append(user)
+                    update()
+                })
+            }
+            // If there are no children, run completion here instead
+            if snapshot.childrenCount == 0 {
+                update()
+            }
+        })
+    }
+    /** Adds a friend observer for the specified group id. The completion function will run every time this list changes, allowing you
+     to update your UI. */
+    func addFriendObserver(ForGroupID groupID: String, update: @escaping () -> Void) {
+        CURRENT_USER_FRIENDS_REF.observe(DataEventType.value, with: { (snapshot) in
+            self.friendList.removeAll()
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let id = child.key
+                self.getUser(id, completion: { (user) in
+                    user.chatId = snapshot.childSnapshot(forPath: id).value as! String
+                    if child.childSnapshot(forPath: "groups").hasChild(groupID){
+                        user.isInThisGroup = true
+                    } else if child.childSnapshot(forPath: "groupRequests").hasChild(groupID){
+                        user.isInThisGroupRequested = true
+                    }
                     self.friendList.append(user)
                     update()
                 })
@@ -319,7 +374,7 @@ class SocialSystem {
     var groupRequestList = [GroupData]()
     /** Adds a group request observer. The completion function will run every time this list changes, allowing you
      to update your UI. */
-    func addRequestObserver(_ update: @escaping () -> Void) {
+    func addGroupRequestObserver(_ update: @escaping () -> Void) {
         CURRENT_USER_GROUP_REQUESTS_REF.observe(DataEventType.value, with: { (snapshot) in
             self.groupRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
@@ -346,7 +401,7 @@ class SocialSystem {
     var messagesList = [MessageData]()
     /** Adds a message observer. The completion function will run every time this list changes, allowing you
      to update your UI. */
-    func addMessageObserver(_ chatID: String, update: @escaping () -> Void) {
+    func addMessageObserver(FromChatID chatID: String, update: @escaping () -> Void) {
         CHATS_REF.child(chatID).observe(DataEventType.value, with: { (snapshot) in
             self.messagesList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {

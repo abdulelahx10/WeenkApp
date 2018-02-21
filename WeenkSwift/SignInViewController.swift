@@ -31,7 +31,7 @@ class SignInViewController: UIViewController {
         _authHandle = Auth.auth().addStateDidChangeListener { (auth: Auth, user: User?) in
             
             // check if there is a current user
-            if user != nil {
+            if user != nil {// TODO update
                 self.ref = Database.database().reference()
                 self.ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
                     if !snapshot.hasChild((user?.uid)!){
