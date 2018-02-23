@@ -31,14 +31,20 @@ class SignInViewController: UIViewController {
         _authHandle = Auth.auth().addStateDidChangeListener { (auth: Auth, user: User?) in
             
             // check if there is a current user
-            if user != nil {
+            if user != nil {// TODO update
                 self.ref = Database.database().reference()
                 self.ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
+<<<<<<< HEAD
                     if !snapshot.hasChild((user?.uid)!){
                         self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName) // TODO fix if crash
                         self.ref.child("users").child(user!.uid).child("email").setValue(user?.email)
                         //self.ref.child("users").child(user!.uid).child("photoURL").setValue(user?.photoURL?.absoluteString)
                     }
+=======
+                    self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName) // TODO fix if crash
+                    self.ref.child("users").child(user!.uid).child("email").setValue(user?.email)
+                    self.ref.child("users").child(user!.uid).child("photoURL").setValue(user?.photoURL?.absoluteString)
+>>>>>>> 31d3403eddd7041c8dca320bd238b60d5c6ddbc0
                 })
                 self.performSegue(withIdentifier: "signedIn", sender: self)
             }
