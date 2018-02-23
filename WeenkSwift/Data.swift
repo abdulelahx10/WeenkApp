@@ -12,15 +12,21 @@ class UserData {
     var email: String!
     var name: String!
     var photoURL: String!
-    var id: String!
-    var chatId : String!
+    var id: String! = ""
+    var chatId: String!
+    var isFriend: Bool! = false
+    var isFriendRequested: Bool! = false
+    var isInThisGroup: Bool! = false
+    var isInThisGroupRequested: Bool! = false
     
-    init(userEmail: String, userName: String, userPhotoURL: String, userID: String, chatID: String) {
+    init(userEmail: String, userName: String, userPhotoURL: String, userID: String) {
         self.email = userEmail
         self.name = userName
         self.photoURL = userPhotoURL
         self.id = userID
-        self.chatId = chatID
+        self.isFriend = isFriend
+        self.isFriendRequested = isFriendRequested
+        self.isInThisGroup = isInThisGroup
     }
     
 }
