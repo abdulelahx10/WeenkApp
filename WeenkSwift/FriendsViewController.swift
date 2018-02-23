@@ -8,9 +8,17 @@
 
 import UIKit
 
-class FriendsViewController: UIViewController {
+struct socialListObj {
+    
+    let type:String
+    let list:[Any]
+}
+class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource{
 
     @IBOutlet weak var tableView: UITableView!
+    
+    var allSocialList = [socialListObj]()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +26,18 @@ class FriendsViewController: UIViewController {
         SocialSystem.system.addFriendObserver {
             self.tableView.reloadData()
         }
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        var friends = socialListObj(type: "friends", list: SocialSystem.system.friendList)
+        var groups = socialListObj(type: "group", list: SocialSystem.system.userGroupdList)
+        var friendRequsts = socialListObj(type: "friendRequst", list: SocialSystem.system.friendRequestList)
+        
+        allSocialList.append(groups)
+        allSocialList.append(friends)
+        allSocialList.append(friendRequsts)
+        
         
     }
     deinit {
@@ -34,37 +54,48 @@ class FriendsViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-
-}
-extension FriendsViewController: UITableViewDataSource {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return allSocialList.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SocialSystem.system.friendList.count
+        return allSocialList[section].list.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Create cell
-        var cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as? UserCell
-        if cell == nil {
-            tableView.register(UINib(nibName: "UserCell", bundle: nil), forCellReuseIdentifier: "UserCell")
-            cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as? UserCell
+        
+        if allSocialList[indexPath.section].type == "friend" {
+            
+            var cellUser:UserData = allSocialList[indexPath.section].list[indexPath.row] as! UserData
+            var cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as? UserCell
+            if cell == nil {
+                tableView.register(UINib(nibName: "UserCell", bundle: nil), forCellReuseIdentifier: "UserCell")
+                cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as? UserCell
+            }
+            
+            // Modify cell
+            cell!.button.setTitle("track", for: UIControlState())
+            cell!.nameLabel.text = cellUser.name
+            
+            
+            cell!.setFunction {
+                let id = SocialSystem.system.friendList[indexPath.row].id
+                SocialSystem.system.removeFriend(id!)
+            }
+            
+            // Return cell
+            return cell!
+        }else if allSocialList[indexPath.section].type == "group"{
+            
+        }else if allSocialList[indexPath.section].type == "friendRequst"{
+            
         }
         
-        // Modify cell
-        cell!.button.setTitle("Remove", for: UIControlState())
-        cell!.nameLabel.text = SocialSystem.system.friendList[indexPath.row].name
         
-        cell!.setFunction {
-            let id = SocialSystem.system.friendList[indexPath.row].id
-            SocialSystem.system.removeFriend(id!)
-        }
-        
-        // Return cell
-        return cell!
+        return UITableViewCell()
     }
-    
+
 }
+
+

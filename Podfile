@@ -15,9 +15,9 @@ target 'Weenk' do
     pod 'FirebaseUI/Twitter'
     pod 'TwitterKit'
     pod 'GoogleSignIn'
-    pod 'SwiftyJSON'
     pod 'Mapbox-iOS-SDK'
     pod 'MapboxNavigation'
     pod 'ARCL'
+    pod 'Motion'
 end
 

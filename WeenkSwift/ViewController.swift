@@ -9,20 +9,35 @@
 import UIKit
 import Firebase
 import Mapbox
+import ARCL
+import Motion
+import CoreLocation
 
-
-class ViewController: UIViewController {
+class ViewController: UIViewController , CLLocationManagerDelegate{
 
     fileprivate var _refHandle: DatabaseHandle!
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
     var user: User?
     var displayName = "Anonymous"
+    let locationManager = CLLocationManager()
     
+    
+    @IBOutlet weak var mapView: MGLMapView!
+    @IBOutlet weak var arView: SceneLocationView! = SceneLocationView()
     @IBOutlet weak var nameLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureAuth()
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+        mapView.logoView.isHidden = true
+        mapView.attributionButton.isHidden = true
+        
         
 
     }
@@ -49,9 +64,42 @@ class ViewController: UIViewController {
         }
     }
 
+    @IBAction func toAR(_ sender: UISwitch) {
+        
+        
+        if sender.isOn {
+            arView.run()
+            
+            mapView.zoomLevel = 12
+            mapView.animate(.translate(x: 120, y: 180, z: 1), .scale(x:0.2668,y:0.15,z:1), .corner(radius:(187.5  * 1.4)))
+        }else{
+            arView.pause()
+            mapView.animate(.translate(x:0, y: 0, z: 1), .scale(x:1,y:1,z:1), .corner(radius:(0)))
+        }
+        
+    }
+    
     deinit {
         // set up what needs to be deinitialized when view is no longer being used
         Auth.auth().removeStateDidChangeListener(_authHandle)
+        arView.pause()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        let location = locations[locations.count - 1];
+        if location.horizontalAccuracy > 0 {
+            
+            //store user location data
+            //user.lat = location.coordinate.latitude
+            //user.lon = location.coordinate.longitude
+            
+           
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
     }
     
     
@@ -66,9 +114,6 @@ class ViewController: UIViewController {
         } catch {
             print("unable to sign out: \(error)")
         }
-    }
-    @IBAction func AR(_ sender: Any) {
-        self.performSegue(withIdentifier: "AR", sender: self)
     }
     
 }
