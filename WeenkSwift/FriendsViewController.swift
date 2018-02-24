@@ -60,7 +60,7 @@ extension FriendsViewController: UITableViewDataSource {
         
         cell!.setFunction {
             let id = SocialSystem.system.friendList[indexPath.row].id
-            SocialSystem.system.removeFriend(id!)
+            SocialSystem.system.removeFriend(WithUserID: id!)
         }
         
         // Return cell
