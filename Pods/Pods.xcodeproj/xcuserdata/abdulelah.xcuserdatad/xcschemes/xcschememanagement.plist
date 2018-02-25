@@ -95,35 +95,35 @@
 			<key>orderHint</key>
 			<integer>13</integer>
 		</dict>
-		<key>Pods-Weenk.xcscheme</key>
+		<key>Motion.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
-			<integer>15</integer>
+			<integer>14</integer>
 		</dict>
-		<key>Polyline.xcscheme</key>
+		<key>Pods-Weenk.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
 			<integer>16</integer>
 		</dict>
-		<key>SDWebImage.xcscheme</key>
+		<key>Polyline.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
 			<integer>17</integer>
 		</dict>
-		<key>Solar.xcscheme</key>
+		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
 			<integer>18</integer>
 		</dict>
-		<key>SwiftyJSON.xcscheme</key>
+		<key>Solar.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -149,7 +149,7 @@
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
-			<integer>14</integer>
+			<integer>15</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
