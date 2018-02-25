@@ -22,7 +22,8 @@ class SocialSystem {
     let GROUPS_REF = Database.database().reference().child("groups")
     /* The chat Firebase reference */
     let CHATS_REF = Database.database().reference().child("chats")
-    
+    /* To ensure that execution order is correct */
+    let group = DispatchGroup()
     /** The Firebase reference to the current user tree */
     var CURRENT_USER_REF: DatabaseReference {
         let id = Auth.auth().currentUser!.uid
@@ -54,7 +55,7 @@ class SocialSystem {
         let id = Auth.auth().currentUser!.uid
         return id
     }
-
+    
     
     /** Gets the current User object for the specified user id */
     func getCurrentUserData(_ completion: @escaping (UserData) -> Void) {
@@ -182,20 +183,26 @@ class SocialSystem {
     // MARK: - All users
     /** The list of all users */
     var userList = [UserData]()
-    /** Adds a user observer. The completion function will run every time this list changes, allowing you  
+    /** Adds a user observer. The completion function will run every time this list changes, allowing you
      to update your UI. */
     func addUserObserver(_ update: @escaping () -> Void) {
-        SocialSystem.system.USERS_REF.observe(DataEventType.value, with: { (snapshot) in
+        USERS_REF.observe(DataEventType.value, with: { (snapshot) in
             self.userList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let email = child.childSnapshot(forPath: "email").value as! String
-                let name = child.childSnapshot(forPath: "userName").value as! String
-                let photoURL = child.childSnapshot(forPath: "photoURL").value as! String
+                let id = child.key
                 if email != Auth.auth().currentUser?.email! {
-                    self.userList.append(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: child.key))
+                    self.group.enter()
+                    self.getUser(id, completion: { (user) in
+                        self.userList.append(user)
+                        self.group.leave()
+                    })
                 }
             }
-            update()
+            self.group.notify(queue: .main) {
+                update()
+            }
+            
         })
     }
     /** Removes the user observer. This should be done when leaving the view that uses the observer. */
@@ -210,12 +217,13 @@ class SocialSystem {
     /** search users. The completion function will run every time this list changes, allowing you
      to update your UI. */
     func SearchUsers(WithName name: String, update: @escaping () -> Void) {
-        USERS_REF.queryOrdered(byChild: "userNameLower").queryStarting(atValue: name.lowercased()).queryEnding(atValue: name.lowercased()+"\u{f8ff}").observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+        USERS_REF.queryOrdered(byChild: "userNameLower").queryStarting(atValue: name).queryEnding(atValue: name+"\u{f8ff}").observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             self.searchedUsersList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let email = child.childSnapshot(forPath: "email").value as! String
                 let id = child.key
                 if email != Auth.auth().currentUser?.email! {
+                    self.group.enter()
                     self.getUser(id, completion: { (user) in
                         if child.childSnapshot(forPath: "friends").exists() && child.childSnapshot(forPath: "friends").hasChild(self.CURRENT_USER_ID){
                             user.isFriend = true
@@ -223,13 +231,16 @@ class SocialSystem {
                             user.isFriendRequested = true
                         }
                         self.searchedUsersList.append(user)
+                        self.group.leave()
                     })
                 }
             }
-            update()
+            self.group.notify(queue: .main) {
+                update()
+            }
         })
     }
-
+    
     
     
     // MARK: - All friends
@@ -242,14 +253,14 @@ class SocialSystem {
             self.friendList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.chatId = snapshot.childSnapshot(forPath: id).value as! String
                     self.friendList.append(user)
-                    update()
+                    self.group.leave()
                 })
             }
-            // If there are no children, run completion here instead
-            if snapshot.childrenCount == 0 {
+            self.group.notify(queue: .main) {
                 update()
             }
         })
@@ -261,6 +272,7 @@ class SocialSystem {
             self.friendList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.chatId = snapshot.childSnapshot(forPath: id).value as! String
                     if child.childSnapshot(forPath: "groups").exists() && child.childSnapshot(forPath: "groups").hasChild(groupID){
@@ -269,11 +281,10 @@ class SocialSystem {
                         user.isInThisGroupRequested = true
                     }
                     self.friendList.append(user)
-                    update()
+                    self.group.leave()
                 })
             }
-            // If there are no children, run completion here instead
-            if snapshot.childrenCount == 0 {
+            self.group.notify(queue: .main) {
                 update()
             }
         })
@@ -294,13 +305,13 @@ class SocialSystem {
             self.userGroupdList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                self.group.enter()
                 self.getGroup(id, completion:  { (group) in
                     self.userGroupdList.append(group)
-                    update()
+                    self.group.leave()
                 })
             }
-            // If there are no children, run completion here instead
-            if snapshot.childrenCount == 0 {
+            self.group.notify(queue: .main) {
                 update()
             }
         })
@@ -321,14 +332,13 @@ class SocialSystem {
             self.userGroupMembers.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                self.group.enter()
                 self.getUser(id, completion: { (user) in
                     self.userGroupMembers.append(user)
-                    update()
-
+                    self.group.leave()
                 })
             }
-            // If there are no children, run completion here instead
-            if snapshot.childrenCount == 0 {
+            self.group.notify(queue: .main) {
                 update()
             }
         })
@@ -349,13 +359,13 @@ class SocialSystem {
             self.friendRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                self.group.enter()
                 self.getUser(id, completion: { (user) in
                     self.friendRequestList.append(user)
-                    update()
+                    self.group.leave()
                 })
             }
-            // If there are no children, run completion here instead
-            if snapshot.childrenCount == 0 {
+            self.group.notify(queue: .main) {
                 update()
             }
         })
@@ -376,13 +386,13 @@ class SocialSystem {
             self.groupRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                self.group.enter()
                 self.getGroup(id, completion: { (group) in
                     self.groupRequestList.append(group)
-                    update()
+                    self.group.leave()
                 })
             }
-            // If there are no children, run completion here instead
-            if snapshot.childrenCount == 0 {
+            self.group.notify(queue: .main) {
                 update()
             }
         })
@@ -403,13 +413,13 @@ class SocialSystem {
             self.messagesList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                self.group.enter()
                 self.getMessage(chatID, id, completion: { (message) in
                     self.messagesList.append(message)
-                    update()
+                    self.group.leave()
                 })
             }
-            // If there are no children, run completion here instead
-            if snapshot.childrenCount == 0 {
+            self.group.notify(queue: .main) {
                 update()
             }
         })
