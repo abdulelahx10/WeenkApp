@@ -4,6 +4,12 @@
 <dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Use the camera</string>
+	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
+	<true/>
+	<key>NSLocationUsageDescription</key>
+	<string>Use location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Shows your location on the map and helps improve OpenStreetMap.</string>
 	<key>CFBundleDisplayName</key>
 	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -42,9 +48,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MGLMapboxAccessToken</key>
-	<string>pk.eyJ1IjoiYWJkdWxlbGFoMTAiLCJhIjoiY2pkN21sMWRkNjF1YTJ4bnM0eWc2aG1kcSJ9.ZsjGqIDrVz5N2vYmMSwgzA</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Shows your location on the map and helps improve OpenStreetMap.</string>
+	<string>pk.eyJ1IjoiYWJkdWxsYWh6ZWVyIiwiYSI6ImNqZGM0bXJibjIwZmEzM3FvNTRvZjFvczUifQ.X8KQdcUi1t9wa-iWdIv2eA</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch Screen</string>
 	<key>UIMainStoryboardFile</key>
