@@ -31,19 +31,9 @@ class SignInViewController: UIViewController {
         _authHandle = Auth.auth().addStateDidChangeListener { (auth: Auth, user: User?) in
             
             // check if there is a current user
-            if user != nil {// TODO update
+            if user != nil {
                 self.ref = Database.database().reference()
                 self.ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
-
-                    if !snapshot.hasChild((user?.uid)!){
-                        self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName) // TODO fix if crash
-                        self.ref.child("users").child(user!.uid).child("email").setValue(user?.email)
-                        //self.ref.child("users").child(user!.uid).child("photoURL").setValue(user?.photoURL?.absoluteString)
-                    }
-
-                    self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName) // TODO fix if crash
-                    self.ref.child("users").child(user!.uid).child("email").setValue(user?.email)
-                    self.ref.child("users").child(user!.uid).child("photoURL").setValue(user?.photoURL?.absoluteString)
 
                     self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName)
                     self.ref.child("users").child(user!.uid).child("userNameLower").setValue(user?.displayName?.lowercased())
