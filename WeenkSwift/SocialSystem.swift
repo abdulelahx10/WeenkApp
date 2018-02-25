@@ -60,7 +60,7 @@ class SocialSystem {
     func getCurrentUserData(_ completion: @escaping (UserData) -> Void) {
         CURRENT_USER_REF.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let email = snapshot.childSnapshot(forPath: "email").value as! String
-            let name = snapshot.childSnapshot(forPath: "name").value as! String
+            let name = snapshot.childSnapshot(forPath: "userName").value as! String
             let photoURL = snapshot.childSnapshot(forPath: "photoURL").value as! String
             let id = snapshot.key
             completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id))
@@ -70,7 +70,7 @@ class SocialSystem {
     func getUser(_ userID: String, completion: @escaping (UserData) -> Void) {
         USERS_REF.child(userID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let email = snapshot.childSnapshot(forPath: "email").value as! String
-            let name = snapshot.childSnapshot(forPath: "name").value as! String
+            let name = snapshot.childSnapshot(forPath: "userName").value as! String
             let photoURL = snapshot.childSnapshot(forPath: "photoURL").value as! String
             let id = snapshot.key
             completion(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: id))
@@ -163,7 +163,7 @@ class SocialSystem {
     func sendMessage(ToChatID chatID: String,WithTheMessage message: String) {
         let ref = CHATS_REF.child(chatID).childByAutoId()
         ref.child("message").setValue(message)
-        let name = CURRENT_USER_REF.value(forKey: "name") as! String
+        let name = CURRENT_USER_REF.value(forKey: "userName") as! String
         ref.child("sender").setValue(name)// TODO maybe change to sender ID insted of name
         // get the current date and time
         let currentDateTime = Date()
@@ -189,7 +189,7 @@ class SocialSystem {
             self.userList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let email = child.childSnapshot(forPath: "email").value as! String
-                let name = child.childSnapshot(forPath: "name").value as! String
+                let name = child.childSnapshot(forPath: "userName").value as! String
                 let photoURL = child.childSnapshot(forPath: "photoURL").value as! String
                 if email != Auth.auth().currentUser?.email! {
                     self.userList.append(UserData(userEmail: email, userName: name, userPhotoURL: photoURL, userID: child.key))
@@ -206,8 +206,8 @@ class SocialSystem {
     
     // MARK: - All users
     /** The list of searched users */
-    var searchedUserList = [UserData]()
-    /** Adds a searched user observer. The completion function will run every time this list changes, allowing you
+    var searchedUsersList = [UserData]()
+    /** search users. The completion function will run every time this list changes, allowing you
      to update your UI. */
     func addSearchUserObserver(WithName name: String, update: @escaping () -> Void) {
         SocialSystem.system.USERS_REF.queryOrdered(byChild: "UserName").queryStarting(atValue: name).queryEnding(atValue: name+"\u{f8ff}").observe(DataEventType.value, with: { (snapshot) in
@@ -222,17 +222,14 @@ class SocialSystem {
                         } else if child.childSnapshot(forPath: "friendRequests").exists() && child.childSnapshot(forPath: "friendRequests").hasChild(self.CURRENT_USER_ID){
                             user.isFriendRequested = true
                         }
-                        self.searchedUserList.append(user)
+                        self.searchedUsersList.append(user)
                     })
                 }
             }
             update()
         })
     }
-    /** Removes the user observer. This should be done when leaving the view that uses the observer. */
-    func removeSearchUserObserver() {
-        USERS_REF.removeAllObservers()
-    }
+
     
     
     // MARK: - All friends
