@@ -65,6 +65,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Create cell
         
+
         if allSocialList[indexPath.section].type == "friend" {
             
             var cellUser:UserData = allSocialList[indexPath.section].list[indexPath.row] as! UserData
@@ -90,6 +91,15 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             
         }else if allSocialList[indexPath.section].type == "friendRequst"{
             
+
+        // Modify cell
+        cell!.button.setTitle("Remove", for: UIControlState())
+        cell!.nameLabel.text = SocialSystem.system.friendList[indexPath.row].name
+        
+        cell!.setFunction {
+            let id = SocialSystem.system.friendList[indexPath.row].id
+            SocialSystem.system.removeFriend(WithUserID: id!)
+
         }
         
         
