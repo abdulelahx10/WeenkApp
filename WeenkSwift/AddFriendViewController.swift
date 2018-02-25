@@ -12,13 +12,13 @@ class AddFriendViewController: UIViewController , UITableViewDelegate , UITableV
    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SocialSystem.system.searchedUserList.count
+        return SocialSystem.system.searchedUsersList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "addFriendCell") as! addFriendTableViewCell
-        cell.userName.text = SocialSystem.system.searchedUserList[indexPath.row].name
+        cell.userName.text = SocialSystem.system.searchedUsersList[indexPath.row].name
         
         return cell
     }
@@ -32,10 +32,11 @@ class AddFriendViewController: UIViewController , UITableViewDelegate , UITableV
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print("textChange")
-        SocialSystem.system.addSearchUserObserver(WithName: searchText) {
+        SocialSystem.system.SearchUsers(WithName: searchText) {
             self.tableView.reloadData()
             print("updated")
         }
+        
     }
     
     @IBOutlet weak var tableView: UITableView!
