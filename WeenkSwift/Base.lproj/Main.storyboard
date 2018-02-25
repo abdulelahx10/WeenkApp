@@ -252,18 +252,13 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="76"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rQR-zm-Dd3" userLabel="searchField">
-                                        <rect key="frame" x="8" y="46" width="359" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <searchBar contentMode="redraw" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P5D-73-BWg">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="56"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <textInputTraits key="textInputTraits"/>
-                                        <connections>
-                                            <action selector="onTextChange:" destination="vzW-ya-OAV" eventType="editingChanged" id="hpn-QS-gcU"/>
-                                        </connections>
-                                    </textField>
+                                    </searchBar>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="search" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TWR-fy-0cj">
-                                        <rect key="frame" x="154" y="17" width="67" height="21"/>
+                                        <rect key="frame" x="154" y="7" width="67" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -321,7 +316,8 @@
                         <barButtonItem key="backBarButtonItem" title="back" id="BkP-kC-2ac"/>
                     </navigationItem>
                     <connections>
-                        <outlet property="addFriendTable" destination="hse-uX-mej" id="fmn-HY-jmA"/>
+                        <outlet property="searchBar" destination="P5D-73-BWg" id="d8J-9R-0Nn"/>
+                        <outlet property="tableView" destination="hse-uX-mej" id="Oxs-ZO-AdY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fG3-49-Gz3" userLabel="First Responder" sceneMemberID="firstResponder"/>

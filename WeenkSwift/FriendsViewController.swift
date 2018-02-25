@@ -81,7 +81,6 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             
             cell!.setFunction {
                 let id = SocialSystem.system.friendList[indexPath.row].id
-                SocialSystem.system.removeFriend(id!)
             }
             
             // Return cell

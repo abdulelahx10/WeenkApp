@@ -210,7 +210,7 @@ class SocialSystem {
     /** Adds a searched user observer. The completion function will run every time this list changes, allowing you
      to update your UI. */
     func addSearchUserObserver(WithName name: String, update: @escaping () -> Void) {
-        SocialSystem.system.USERS_REF.queryOrdered(byChild: "name").queryStarting(atValue: name).queryEnding(atValue: name+"\u{f8ff}").observe(DataEventType.value, with: { (snapshot) in
+        SocialSystem.system.USERS_REF.queryOrdered(byChild: "UserName").queryStarting(atValue: name).queryEnding(atValue: name+"\u{f8ff}").observe(DataEventType.value, with: { (snapshot) in
             self.searchedUserList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let email = child.childSnapshot(forPath: "email").value as! String

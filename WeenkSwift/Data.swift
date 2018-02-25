@@ -24,9 +24,7 @@ class UserData {
         self.name = userName
         self.photoURL = userPhotoURL
         self.id = userID
-        self.isFriend = isFriend
-        self.isFriendRequested = isFriendRequested
-        self.isInThisGroup = isInThisGroup
+
     }
     
 }
