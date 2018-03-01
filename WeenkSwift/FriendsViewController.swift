@@ -13,7 +13,11 @@ struct socialListObj {
     let type:String
     let list:[Any]
 }
-class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource{
+class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate{
+    
+    
+   
+    
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -23,21 +27,19 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        SocialSystem.system.addFriendObserver {
-            self.tableView.reloadData()
-        }
+    
         
         tableView.delegate = self
         tableView.dataSource = self
         
-        var friends = socialListObj(type: "friends", list: SocialSystem.system.friendList)
-        var groups = socialListObj(type: "group", list: SocialSystem.system.userGroupdList)
-        var friendRequsts = socialListObj(type: "friendRequst", list: SocialSystem.system.friendRequestList)
+      
+        SocialSystem.system.addFriendObserver {
+            self.tableView.reloadData()
+        }
         
-        allSocialList.append(groups)
-        allSocialList.append(friends)
-        allSocialList.append(friendRequsts)
-        
+        SocialSystem.system.addFriendRequestObserver {
+            self.tableView.reloadData()
+        }
         
     }
     deinit {
@@ -55,57 +57,99 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return allSocialList.count
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return allSocialList[section].list.count
+      
+        switch (section) {
+        case 0:
+            return SocialSystem.system.friendList.count
+         
+            
+        case 1:
+            return SocialSystem.system.userGroupdList.count
+         
+        
+        case 2:
+            return SocialSystem.system.friendRequestList.count
+      
+        default:
+           return -1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Create cell
         
-        var cellUser:UserData = allSocialList[indexPath.section].list[indexPath.row] as! UserData
-        var cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as? UserCell
-        if cell == nil {
-            tableView.register(UINib(nibName: "UserCell", bundle: nil), forCellReuseIdentifier: "UserCell")
-            cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as? UserCell
-        }
         
-        if allSocialList[indexPath.section].type == "friend" {
-
-            // Modify cell
-            cell!.button.setTitle("track", for: UIControlState())
-            cell!.nameLabel.text = cellUser.name
+        switch (indexPath.section) {
+        case 0:
             
+            print("type friend")
+           
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell") as? FriendTableViewCell
             
-            cell!.setFunction {
-                let id = SocialSystem.system.friendList[indexPath.row].id
-            }
+            cell?.userName.text = SocialSystem.system.friendList[indexPath.row].name
+            cell?.delegate = self
             
-            // Return cell
             return cell!
-        }else if allSocialList[indexPath.section].type == "group"{
-            
-        }else if allSocialList[indexPath.section].type == "friendRequst"{
-            
-            // Modify cell
-            cell!.button.setTitle("Remove", for: UIControlState())
-            cell!.nameLabel.text = SocialSystem.system.friendList[indexPath.row].name
-            
-            cell!.setFunction {
-                let id = SocialSystem.system.friendList[indexPath.row].id
-                SocialSystem.system.removeFriend(WithUserID: id!)
-
-        // Modify cell
-
         
+        case 1:
+            return UITableViewCell()
         
-        
+        case 2:
+            
+            print("type friendRequst")
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FriendRequstCell") as! FriendRequstTableViewCell
+            
+            cell.userName.text = SocialSystem.system.friendRequestList[indexPath.row].name
+            cell.delegate = self
+            
+            return cell
+            
+        default:
+            return UITableViewCell()
+        }
     }
-        return UITableViewCell()
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+       
+        switch (section) {
+        case 0:
+            return "friends"
+            
+        case 1:
+            return "group"
+            
+        case 2:
+            return "friendRequst"
+        default:
+            return "none"
+        }
+    }
+    func didTapAccept(_ sender: FriendRequstTableViewCell) {
+        guard let tappedIndexPath = tableView.indexPath(for: sender) else { return}
+        SocialSystem.system.acceptFriendRequest(FromUserID: SocialSystem.system.friendRequestList[tappedIndexPath.row].id)
+        self.tableView.reloadData()
+        print("accpted")
+    }
+    
+    func didTapTrack(_ sender: FriendTableViewCell) {
+        guard let tappedIndexPath = tableView.indexPath(for: sender) else { return}
+        print("start Tracking \(SocialSystem.system.friendList[tappedIndexPath.row].name)")
+    }
+    
 }
 
-}
+
 
 

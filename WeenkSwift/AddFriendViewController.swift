@@ -39,6 +39,17 @@ class AddFriendViewController: UIViewController , UITableViewDelegate , UITableV
         
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let selectedUser = SocialSystem.system.searchedUsersList[indexPath.row]
+        SocialSystem.system.sendFriendRequest(ToUserID: selectedUser.id)
+        
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {

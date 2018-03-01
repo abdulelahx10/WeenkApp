@@ -21,6 +21,8 @@
 		5BBC6457202F18B100D7FA3B /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBC6456202F18B100D7FA3B /* SignInViewController.swift */; };
 		5BC944A7202F8F2A00B29D0A /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC944A6202F8F2A00B29D0A /* ARViewController.swift */; };
 		73A78AF1483B2048027DE88D /* Pods_Weenk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3630B2F1DB44B9354EA3AA25 /* Pods_Weenk.framework */; };
+		B42C3AAC20481EA3005C44D1 /* FriendRequstTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */; };
+		B42C3AAE2048440A005C44D1 /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */; };
 		B42D6FDD2040315600CB0FDC /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */; };
 		B42D6FDF204036D400CB0FDC /* addFriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -44,6 +46,8 @@
 		5BBC6456202F18B100D7FA3B /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		5BC944A6202F8F2A00B29D0A /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		B4036B583934A0B257F3EDCE /* Pods-Weenk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Weenk.release.xcconfig"; path = "Pods/Target Support Files/Pods-Weenk/Pods-Weenk.release.xcconfig"; sourceTree = "<group>"; };
+		B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequstTableViewCell.swift; sourceTree = "<group>"; };
+		B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendTableViewCell.swift; sourceTree = "<group>"; };
 		B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
 		B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addFriendTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,6 +93,8 @@
 				B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */,
 				B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */,
 				5B14587420318DF000B58BA4 /* FriendsViewController.swift */,
+				B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */,
+				B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */,
 				5B1458782034087C00B58BA4 /* Data.swift */,
 				5B14587A20345C8E00B58BA4 /* UserCell.swift */,
 				5B14587B20345C8E00B58BA4 /* UserCell.xib */,
@@ -320,6 +326,8 @@
 			files = (
 				5B14587C20345C8E00B58BA4 /* UserCell.swift in Sources */,
 				5B25D748202613280065282B /* ViewController.swift in Sources */,
+				B42C3AAC20481EA3005C44D1 /* FriendRequstTableViewCell.swift in Sources */,
+				B42C3AAE2048440A005C44D1 /* FriendTableViewCell.swift in Sources */,
 				5B14587520318DF000B58BA4 /* FriendsViewController.swift in Sources */,
 				B42D6FDF204036D400CB0FDC /* addFriendTableViewCell.swift in Sources */,
 				B42D6FDD2040315600CB0FDC /* AddFriendViewController.swift in Sources */,
