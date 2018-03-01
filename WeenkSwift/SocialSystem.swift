@@ -217,7 +217,7 @@ class SocialSystem {
     /** search users. The completion function will run every time this list changes, allowing you
      to update your UI. */
     func SearchUsers(WithName name: String, update: @escaping () -> Void) {
-        USERS_REF.queryOrdered(byChild: "userNameLower").queryStarting(atValue: name).queryEnding(atValue: name+"\u{f8ff}").observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+        USERS_REF.queryOrdered(byChild: "userNameLower").queryStarting(atValue: name.lowercased()).queryEnding(atValue: name.lowercased()+"\u{f8ff}").observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             self.searchedUsersList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let email = child.childSnapshot(forPath: "email").value as! String

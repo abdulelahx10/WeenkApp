@@ -24,6 +24,7 @@ class UserData {
         self.name = userName
         self.photoURL = userPhotoURL
         self.id = userID
+
     }
     
 }
