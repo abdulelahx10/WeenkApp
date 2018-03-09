@@ -25,6 +25,8 @@
 		B42C3AAE2048440A005C44D1 /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */; };
 		B42D6FDD2040315600CB0FDC /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */; };
 		B42D6FDF204036D400CB0FDC /* addFriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */; };
+		B49BE5E620519B820040440B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BE5E520519B810040440B /* ChatViewController.swift */; };
+		B49BE5E82051AF140040440B /* MassageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BE5E72051AF140040440B /* MassageTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +52,8 @@
 		B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendTableViewCell.swift; sourceTree = "<group>"; };
 		B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
 		B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addFriendTableViewCell.swift; sourceTree = "<group>"; };
+		B49BE5E520519B810040440B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		B49BE5E72051AF140040440B /* MassageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MassageTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +99,9 @@
 				5B14587420318DF000B58BA4 /* FriendsViewController.swift */,
 				B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */,
 				B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */,
+				B49BE5E520519B810040440B /* ChatViewController.swift */,
 				5B1458782034087C00B58BA4 /* Data.swift */,
+				B49BE5E72051AF140040440B /* MassageTableViewCell.swift */,
 				5B14587A20345C8E00B58BA4 /* UserCell.swift */,
 				5B14587B20345C8E00B58BA4 /* UserCell.xib */,
 				5BBC6450202DB84800D7FA3B /* Supporting Files */,
@@ -333,7 +339,9 @@
 				B42D6FDD2040315600CB0FDC /* AddFriendViewController.swift in Sources */,
 				5B25D746202613280065282B /* AppDelegate.swift in Sources */,
 				5BBC6457202F18B100D7FA3B /* SignInViewController.swift in Sources */,
+				B49BE5E620519B820040440B /* ChatViewController.swift in Sources */,
 				5B1458772034076B00B58BA4 /* SocialSystem.swift in Sources */,
+				B49BE5E82051AF140040440B /* MassageTableViewCell.swift in Sources */,
 				5BC944A7202F8F2A00B29D0A /* ARViewController.swift in Sources */,
 				5B1458792034087C00B58BA4 /* Data.swift in Sources */,
 			);

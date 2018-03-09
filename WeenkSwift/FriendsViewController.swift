@@ -148,6 +148,22 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         print("start Tracking \(SocialSystem.system.friendList[tappedIndexPath.row].name)")
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectendIndex = indexPath.row
+        
+        if indexPath.section == 0{
+            performSegue(withIdentifier: "chatWithFriend", sender: self)
+        }
+       
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? ChatViewController{
+            
+            destination.friendChatWith = SocialSystem.system.friendList[tableView.indexPathForSelectedRow!.row]
+        }
+    }
+    
 }
 
 
