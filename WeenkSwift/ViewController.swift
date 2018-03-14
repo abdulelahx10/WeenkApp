@@ -75,6 +75,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate{
         }else{
             arView.pause()
             mapView.animate(.translate(x:0, y: 0, z: 1), .scale(x:1,y:1,z:1), .corner(radius:(0)))
+            mapView.zoomLevel = 6
         }
         
     }
