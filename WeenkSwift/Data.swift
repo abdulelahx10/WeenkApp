@@ -12,18 +12,35 @@ class UserData {
     var email: String!
     var name: String!
     var photoURL: String!
-    var id: String! = ""
-    var chatId: String!
-    var isFriend: Bool! = false
-    var isFriendRequested: Bool! = false
-    var isInThisGroup: Bool! = false
-    var isInThisGroupRequested: Bool! = false
+    var id: String!
+    var fChatId: String! = ""
+    var gIsChild: Bool! = false
+    var gIsGhostActive: Bool! = false
+    var sIsFriend: Bool! = false
+    var sIsFriendRequested: Bool! = false
+    var gsIsInThisGroup: Bool! = false
+    var gsIsInThisGroupRequested: Bool! = false
+    var reqSentTime: String!
     
     init(userEmail: String, userName: String, userPhotoURL: String, userID: String) {
         self.email = userEmail
         self.name = userName
         self.photoURL = userPhotoURL
         self.id = userID
+    }
+    
+}
+// position class
+class PositionData {
+    
+    var latitude: String!
+    var longitude: String!
+    var lastUpdatedDate: String!
+    
+    init(latitude: String, longitude: String, date: String) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.lastUpdatedDate = date
     }
     
 }
@@ -35,7 +52,8 @@ class GroupData {
     var id: String!
     var adminId: String!
     var chatId: String!
-    var groupdMembersList = [UserData]()
+    var reqSentTime: String!
+    //var groupdMembersList = [UserData]()
     
     
     init(groupName: String, id: String, adminId: String, chatId: String) {
