@@ -40,6 +40,11 @@ class SocialSystem {
         return CURRENT_USER_REF.child("groups")
     }
     
+    /** The Firebase reference to the current user's accepted tracking tree */
+    var CURRENT_USER_ACCEPTED_REF: DatabaseReference {
+        return CURRENT_USER_REF.child("acceptedTracking")
+    }
+    
     /** The Firebase reference to the current user's friend request tree */
     var CURRENT_USER_FRIEND_REQUESTS_REF: DatabaseReference {
         return CURRENT_USER_REF.child("friendRequests")
@@ -124,12 +129,36 @@ class SocialSystem {
     
     /** Sends a friend request to the user with the specified id */
     func sendFriendRequest(ToUserID userID: String) {
-        USERS_REF.child(userID).child("friendRequests").child(CURRENT_USER_ID).setValue(true)
+        let ref = USERS_REF.child(userID).child("friendRequests").child(CURRENT_USER_ID)
+        // get the current date and time
+        let currentDateTime = Date()
+        
+        // initialize the date formatter and set the style
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.dateStyle = .short
+        
+        // get the date time String from the date object
+        let date = formatter.string(from: currentDateTime)
+        ref.child("sentTime").setValue(date)
     }
     
     /** Sends a group request with given groupID to the user with the specified id */
-    func sendGroupRequest(ToUserID groupID: String, userID: String) {
-        USERS_REF.child(userID).child("groupRequests").child(groupID).setValue(true)
+    func sendGroupRequest(ToUserID groupID: String, userID: String, isChild: Bool) {
+        let ref = USERS_REF.child(userID).child("groupRequests").child(groupID)
+        // get the current date and time
+        let currentDateTime = Date()
+        
+        // initialize the date formatter and set the style
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.dateStyle = .short
+        
+        // get the date time String from the date object
+        let date = formatter.string(from: currentDateTime)
+        ref.child("sentTime").setValue(date)
+        
+        ref.child("isChild").setValue(isChild)
     }
     
     /** Accepts a friend request from the user with the specified id */
@@ -143,9 +172,11 @@ class SocialSystem {
     
     /** Accepts a group request with given id*/
     func acceptGroupRequest(FromGroupID groupID: String) {
+        let isChild = CURRENT_USER_REF.child("groupRequests").child(groupID).value(forKey: "isChild") as! Bool
         CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
         CURRENT_USER_REF.child("groups").child(groupID).setValue(true)
-        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).setValue(true)
+        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).child("isChild").setValue(isChild)
+        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).child("isGhostActive").setValue(false)
     }
     
     /** Unfriends the user with the specified id */
@@ -160,8 +191,13 @@ class SocialSystem {
         USERS_REF.child(userID).child("groups").child(groupID).removeValue()
     }
     
-    /** send message to the given chat ID*/
-    func sendMessage(ToChatID chatID: String,WithTheMessage message: String) {
+    /** Change Ghost mode state in the group  with given id to true or false */
+    func changeGhostModeState(InGroupID groupID: String,GhostMode ghostMode: Bool) {
+        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).child("isGhostActive").setValue(ghostMode)
+    }
+    
+    /** send message to the given chat ID */
+    func sendMessage(ToChatID chatID: String, WithTheMessage message: String) {
         let ref = CHATS_REF.child(chatID).childByAutoId()
         ref.child("message").setValue(message)
         let name = CURRENT_USER_REF.value(forKey: "userName") as! String
@@ -177,6 +213,87 @@ class SocialSystem {
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
         ref.child("date").setValue(date)
+    }
+    
+    // TODO: change to other format
+    /** send tracking request to the given chat ID */
+    func sendTrackRequest(ToUserID userID: String) {
+        let ref = USERS_REF.child(userID).child("trackRequests").child(CURRENT_USER_ID)
+        // get the current date and time
+        let currentDateTime = Date()
+        
+        // initialize the date formatter and set the style
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.dateStyle = .short
+        
+        // get the date time String from the date object
+        let date = formatter.string(from: currentDateTime)
+        ref.child("sentTime").setValue(date)
+    }
+    
+    // TODO: change to include timer
+    /** Accepts a track request from the user with the specified id */
+    func acceptTrackRequest(FromUserID userID: String) {
+        CURRENT_USER_REF.child("trackRequests").child(userID).removeValue()
+        CURRENT_USER_REF.child("acceptedTracking").child(userID).setValue(true)
+        USERS_REF.child(userID).child("acceptedTracking").child(CURRENT_USER_ID).setValue(true)
+        USERS_REF.child(userID).child("trackRequests").child(CURRENT_USER_ID).removeValue()
+    }
+    
+    /** update postition in the database */
+    func updatePosition(lat latitude: String, long longitude: String) -> Void {
+        // get the current date and time
+        let currentDateTime = Date()
+        
+        // initialize the date formatter and set the style
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.dateStyle = .short
+        
+        // get the date time String from the date object
+        let date = formatter.string(from: currentDateTime)
+        
+        let pos = ["latitude": latitude,
+                    "longitude": longitude,
+                    "lastUpdatedDate": date]
+        CURRENT_USER_REF.child("position").setValue(pos)
+    }
+    
+    // MARK: - postition
+    /** get postition from the database */
+    func getUserPositionObserver(ForUserID userID: String, completion: @escaping (PositionData) -> Void) {
+        USERS_REF.child(userID).child("position").observe(DataEventType.value, with: { (snapshot) in
+            let lat = snapshot.childSnapshot(forPath: "latitude").value as! String
+            let long = snapshot.childSnapshot(forPath: "longitude").value as! String
+            let date = snapshot.childSnapshot(forPath: "lastUpdatedDate").value as! String
+            completion(PositionData(latitude: lat, longitude: long, date: date))
+        })
+    }
+    /** Removes the postition observer. */
+    func removePositionObserver() {
+        USERS_REF.removeAllObservers()
+    }
+    
+    
+    // MARK: - All Accepted tracking users
+    /** The list of all Accepted tracking users ID */
+    var AcceptedTrackingUserIDList = [String]()
+    /** Adds a Accepted tracking user observer. The completion function will run every time this list changes, allowing you
+     to update your UI. */
+    func addAcceptedTrackingUserObserver(_ update: @escaping () -> Void) {
+        CURRENT_USER_ACCEPTED_REF.observe(DataEventType.value, with: { (snapshot) in
+            self.AcceptedTrackingUserIDList.removeAll()
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let id = child.key
+                self.AcceptedTrackingUserIDList.append(id)
+            }
+            update()
+        })
+    }
+    /** Removes the Accepted user observer. This should be done when leaving the view that uses the observer. */
+    func removeAcceptedUserObserver() {
+        CURRENT_USER_ACCEPTED_REF.removeAllObservers()
     }
     
     
@@ -211,7 +328,7 @@ class SocialSystem {
     }
     
     
-    // MARK: - All users
+    // MARK: - searched users
     /** The list of searched users */
     var searchedUsersList = [UserData]()
     /** search users. The completion function will run every time this list changes, allowing you
@@ -226,9 +343,9 @@ class SocialSystem {
                     self.group.enter()
                     self.getUser(id, completion: { (user) in
                         if child.childSnapshot(forPath: "friends").exists() && child.childSnapshot(forPath: "friends").hasChild(self.CURRENT_USER_ID){
-                            user.isFriend = true
+                            user.sIsFriend = true
                         } else if child.childSnapshot(forPath: "friendRequests").exists() && child.childSnapshot(forPath: "friendRequests").hasChild(self.CURRENT_USER_ID){
-                            user.isFriendRequested = true
+                            user.sIsFriendRequested = true
                         }
                         self.searchedUsersList.append(user)
                         self.group.leave()
@@ -255,7 +372,7 @@ class SocialSystem {
                 let id = child.key
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
-                    user.chatId = snapshot.childSnapshot(forPath: id).value as! String
+                    user.fChatId = snapshot.childSnapshot(forPath: id).value as! String
                     self.friendList.append(user)
                     self.group.leave()
                 })
@@ -274,11 +391,11 @@ class SocialSystem {
                 let id = child.key
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
-                    user.chatId = snapshot.childSnapshot(forPath: id).value as! String
+                    user.fChatId = snapshot.childSnapshot(forPath: id).value as! String
                     if child.childSnapshot(forPath: "groups").exists() && child.childSnapshot(forPath: "groups").hasChild(groupID){
-                        user.isInThisGroup = true
+                        user.gsIsInThisGroup = true
                     } else if child.childSnapshot(forPath: "groupRequests").exists() && child.childSnapshot(forPath: "groupRequests").hasChild(groupID){
-                        user.isInThisGroupRequested = true
+                        user.gsIsInThisGroupRequested = true
                     }
                     self.friendList.append(user)
                     self.group.leave()
@@ -327,13 +444,17 @@ class SocialSystem {
     var userGroupMembers = [UserData]()
     /** Adds a members observer. The completion function will run every time this list changes, allowing you
      to update your UI. */
-    func addMembersObserver(_ groupID: String, update: @escaping () -> Void) {
+    func addMembersObserver(ForGroupID groupID: String, update: @escaping () -> Void) {
         GROUPS_REF.child(groupID).child("members").observe(DataEventType.value, with: { (snapshot) in
             self.userGroupMembers.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                let isChild = snapshot.childSnapshot(forPath: "isChild").value as! Bool
+                let isGhostActive = snapshot.childSnapshot(forPath: "isGhostActive").value as! Bool
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
+                    user.gIsChild = isChild
+                    user.gIsGhostActive = isGhostActive
                     self.userGroupMembers.append(user)
                     self.group.leave()
                 })
@@ -359,8 +480,10 @@ class SocialSystem {
             self.friendRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                let sentTime = snapshot.childSnapshot(forPath: "sentTime").value as! String
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
+                    user.reqSentTime = sentTime
                     self.friendRequestList.append(user)
                     self.group.leave()
                 })
@@ -386,8 +509,10 @@ class SocialSystem {
             self.groupRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
+                let sentTime = snapshot.childSnapshot(forPath: "sentTime").value as! String
                 self.group.enter()
                 self.getGroup(id, completion: { (group) in
+                    group.reqSentTime = sentTime
                     self.groupRequestList.append(group)
                     self.group.leave()
                 })
