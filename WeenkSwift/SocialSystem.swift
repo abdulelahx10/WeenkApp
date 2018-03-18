@@ -372,7 +372,7 @@ class SocialSystem {
                 let id = child.key
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
-                    user.fChatId = snapshot.childSnapshot(forPath: id).value as! String
+                    user.fChatId = child.value as! String
                     self.friendList.append(user)
                     self.group.leave()
                 })
@@ -391,7 +391,7 @@ class SocialSystem {
                 let id = child.key
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
-                    user.fChatId = snapshot.childSnapshot(forPath: id).value as! String
+                    user.fChatId = child.value as! String
                     if child.childSnapshot(forPath: "groups").exists() && child.childSnapshot(forPath: "groups").hasChild(groupID){
                         user.gsIsInThisGroup = true
                     } else if child.childSnapshot(forPath: "groupRequests").exists() && child.childSnapshot(forPath: "groupRequests").hasChild(groupID){
@@ -449,8 +449,8 @@ class SocialSystem {
             self.userGroupMembers.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                let isChild = snapshot.childSnapshot(forPath: "isChild").value as! Bool
-                let isGhostActive = snapshot.childSnapshot(forPath: "isGhostActive").value as! Bool
+                let isChild = child.childSnapshot(forPath: "isChild").value as! Bool
+                let isGhostActive = child.childSnapshot(forPath: "isGhostActive").value as! Bool
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.gIsChild = isChild
@@ -480,7 +480,7 @@ class SocialSystem {
             self.friendRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                let sentTime = snapshot.childSnapshot(forPath: "sentTime").value as! String
+                let sentTime = child.childSnapshot(forPath: "sentTime").value as! String
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.reqSentTime = sentTime
@@ -509,7 +509,7 @@ class SocialSystem {
             self.groupRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                let sentTime = snapshot.childSnapshot(forPath: "sentTime").value as! String
+                let sentTime = child.childSnapshot(forPath: "sentTime").value as! String
                 self.group.enter()
                 self.getGroup(id, completion: { (group) in
                     group.reqSentTime = sentTime
