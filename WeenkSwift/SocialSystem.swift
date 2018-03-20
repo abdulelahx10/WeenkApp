@@ -120,16 +120,16 @@ class SocialSystem {
     /** Create a Group and make current user the admin */
     func createGroup(WithGroupName groupName: String) {
         let ref = GROUPS_REF.childByAutoId()
-        ref.child("groupName").setValue(groupName)
-        ref.child("admin").setValue(CURRENT_USER_ID)
-        ref.child("chatId").setValue(ref.key)
+        let group = ["groupName": groupName,
+                   "admin": CURRENT_USER_ID,
+                   "chatId": ref.key]
+        ref.child(ref.key).setValue(group)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
     }
     
     /** Sends a friend request to the user with the specified id */
     func sendFriendRequest(ToUserID userID: String) {
-        let ref = USERS_REF.child(userID).child("friendRequests").child(CURRENT_USER_ID)
         // get the current date and time
         let currentDateTime = Date()
         
@@ -140,12 +140,12 @@ class SocialSystem {
         
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
-        ref.child("sentTime").setValue(date)
+        
+        USERS_REF.child(userID).child("friendRequests").child(CURRENT_USER_ID).child("sentTime").setValue(date)
     }
     
     /** Sends a group request with given groupID to the user with the specified id */
     func sendGroupRequest(ToUserID groupID: String, userID: String, isChild: Bool) {
-        let ref = USERS_REF.child(userID).child("groupRequests").child(groupID)
         // get the current date and time
         let currentDateTime = Date()
         
@@ -156,9 +156,10 @@ class SocialSystem {
         
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
-        ref.child("sentTime").setValue(date)
         
-        ref.child("isChild").setValue(isChild)
+        let groupReq = ["sentTime": date,
+                        "isChild": isChild] as [String : Any]
+        USERS_REF.child(userID).child("groupRequests").child(groupID).setValue(groupReq)
     }
     
     /** Accepts a friend request from the user with the specified id */
@@ -198,10 +199,6 @@ class SocialSystem {
     
     /** send message to the given chat ID */
     func sendMessage(ToChatID chatID: String, WithTheMessage message: String) {
-        let ref = CHATS_REF.child(chatID).childByAutoId()
-        ref.child("message").setValue(message)
-        let name = CURRENT_USER_REF.value(forKey: "userName") as! String
-        ref.child("sender").setValue(name)// TODO maybe change to sender ID insted of name
         // get the current date and time
         let currentDateTime = Date()
         
@@ -212,13 +209,17 @@ class SocialSystem {
         
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
-        ref.child("date").setValue(date)
+        
+        let name = CURRENT_USER_REF.value(forKey: "userName") as! String
+        let message = ["message": message,
+                       "sender": name, // TODO: maybe change to sender ID insted of name
+                       "date": date]
+        CHATS_REF.child(chatID).childByAutoId().setValue(message)
     }
     
     // TODO: change to other format
     /** send tracking request to the given chat ID */
     func sendTrackRequest(ToUserID userID: String) {
-        let ref = USERS_REF.child(userID).child("trackRequests").child(CURRENT_USER_ID)
         // get the current date and time
         let currentDateTime = Date()
         
@@ -229,7 +230,7 @@ class SocialSystem {
         
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
-        ref.child("sentTime").setValue(date)
+        USERS_REF.child(userID).child("trackRequests").child(CURRENT_USER_ID).child("sentTime").setValue(date)
     }
     
     // TODO: change to include timer
@@ -372,7 +373,7 @@ class SocialSystem {
                 let id = child.key
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
-                    user.fChatId = snapshot.childSnapshot(forPath: id).value as! String
+                    user.fChatId = child.value as! String
                     self.friendList.append(user)
                     self.group.leave()
                 })
@@ -391,7 +392,7 @@ class SocialSystem {
                 let id = child.key
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
-                    user.fChatId = snapshot.childSnapshot(forPath: id).value as! String
+                    user.fChatId = child.value as! String
                     if child.childSnapshot(forPath: "groups").exists() && child.childSnapshot(forPath: "groups").hasChild(groupID){
                         user.gsIsInThisGroup = true
                     } else if child.childSnapshot(forPath: "groupRequests").exists() && child.childSnapshot(forPath: "groupRequests").hasChild(groupID){
@@ -449,8 +450,8 @@ class SocialSystem {
             self.userGroupMembers.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                let isChild = snapshot.childSnapshot(forPath: "isChild").value as! Bool
-                let isGhostActive = snapshot.childSnapshot(forPath: "isGhostActive").value as! Bool
+                let isChild = child.childSnapshot(forPath: "isChild").value as! Bool
+                let isGhostActive = child.childSnapshot(forPath: "isGhostActive").value as! Bool
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.gIsChild = isChild
@@ -509,7 +510,7 @@ class SocialSystem {
             self.groupRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                let sentTime = snapshot.childSnapshot(forPath: "sentTime").value as! String
+                let sentTime = child.childSnapshot(forPath: "sentTime").value as! String
                 self.group.enter()
                 self.getGroup(id, completion: { (group) in
                     group.reqSentTime = sentTime
