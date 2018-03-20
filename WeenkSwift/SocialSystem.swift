@@ -106,11 +106,11 @@ class SocialSystem {
     /** Gets the message object for the specified message id */
     func getMessage(_ chatID: String, _ messageID: String, completion: @escaping (MessageData) -> Void) {
         CHATS_REF.child(chatID).child(messageID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
-            let sender = snapshot.childSnapshot(forPath: "sender").value as! String
-            let message = snapshot.childSnapshot(forPath: "message").value as! String
-            let date = snapshot.childSnapshot(forPath: "date").value as! String
+            let sender = snapshot.childSnapshot(forPath: "sender").value as? String
+            let message = snapshot.childSnapshot(forPath: "message").value as? String
+            let date = snapshot.childSnapshot(forPath: "date").value as? String
             let id = snapshot.key
-            completion(MessageData(sender: sender, id: id, message: message, date: date))
+            completion(MessageData(sender: sender!, id: id, message: message!, date: date!))
             
         })
     }
@@ -480,7 +480,7 @@ class SocialSystem {
             self.friendRequestList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                let sentTime = snapshot.childSnapshot(forPath: "sentTime").value as! String
+                let sentTime = child.childSnapshot(forPath: "sentTime").value as! String
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.reqSentTime = sentTime

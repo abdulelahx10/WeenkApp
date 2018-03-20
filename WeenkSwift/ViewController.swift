@@ -12,9 +12,11 @@ import Mapbox
 import ARCL
 import Motion
 import CoreLocation
+import DropDown
 
-class ViewController: UIViewController , CLLocationManagerDelegate{
-
+class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewDelegate , UITableViewDataSource{
+   
+ 
     fileprivate var _refHandle: DatabaseHandle!
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
     var user: User?
@@ -26,10 +28,32 @@ class ViewController: UIViewController , CLLocationManagerDelegate{
     @IBOutlet weak var arView: SceneLocationView! = SceneLocationView()
     @IBOutlet weak var nameLabel: UILabel!
     
+    @IBOutlet weak var dropDownTable: UITableView!
+    @IBOutlet weak var dropDownTableHC: NSLayoutConstraint!
+    var dropDownIsDropped = false
+    @IBOutlet weak var dropDownBtn: UIButton!
+    
+    var friendTrackingID : String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureAuth()
         
+        
+        dropDownTable.delegate = self
+        dropDownTable.dataSource = self
+        dropDownTableHC.constant = 0
+        
+        arView.run()
+        
+        
+        
+        SocialSystem.system.addFriendObserver {
+                self.dropDownTable.reloadData()
+
+       }
+        
+   
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         locationManager.requestWhenInUseAuthorization()
@@ -37,9 +61,12 @@ class ViewController: UIViewController , CLLocationManagerDelegate{
         
         mapView.logoView.isHidden = true
         mapView.attributionButton.isHidden = true
-        
-        
 
+      
+     
+       
+        
+       
     }
     
     func configureAuth() {
@@ -80,6 +107,28 @@ class ViewController: UIViewController , CLLocationManagerDelegate{
         
     }
     
+    
+    @IBAction func selectTracking(_ sender: UIButton) {
+        
+        UIView.animate(withDuration: 0.5) {
+            if !self.dropDownIsDropped {
+                
+                self.dropDownTableHC.constant = CGFloat(44.0 * 5.0)
+                self.dropDownIsDropped = true
+            }else{
+                
+                self.dropDownTableHC.constant = 0
+                self.dropDownIsDropped = false
+                
+            }
+           
+            self.view.layoutIfNeeded()
+        }
+        
+        
+    }
+    
+    
     deinit {
         // set up what needs to be deinitialized when view is no longer being used
         Auth.auth().removeStateDidChangeListener(_authHandle)
@@ -87,15 +136,10 @@ class ViewController: UIViewController , CLLocationManagerDelegate{
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
+       
         let location = locations[locations.count - 1];
         if location.horizontalAccuracy > 0 {
-            
-            //store user location data
-            //user.lat = location.coordinate.latitude
-            //user.lon = location.coordinate.longitude
-            
-           
+            SocialSystem.system.updatePosition(lat: "\(location.coordinate.latitude)", long: "\(location.coordinate.longitude)")
         }
     }
     
@@ -103,6 +147,58 @@ class ViewController: UIViewController , CLLocationManagerDelegate{
         print(error)
     }
     
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return SocialSystem.system.friendList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        var cell = tableView.dequeueReusableCell(withIdentifier: "dropCell")
+        if cell == nil {
+            cell = UITableViewCell(style: .default, reuseIdentifier: "dropCell")
+        }
+        if SocialSystem.system.friendList.count != 0 {
+            cell?.textLabel?.text = SocialSystem.system.friendList[indexPath.row].name
+        }
+        
+        return cell!
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        dropDownBtn.setTitle("Tracking: \(SocialSystem.system.friendList[indexPath.row].name!)", for: .normal)
+        UIView.animate(withDuration: 0.5) {
+            
+            self.dropDownTableHC.constant = 0
+            self.dropDownIsDropped = false
+            self.view.layoutIfNeeded()
+        }
+        
+        friendTrackingID = SocialSystem.system.friendList[indexPath.row].id
+        
+        var coordinate = CLLocationCoordinate2D(latitude: 0.00, longitude: 0.00)
+        var location = CLLocation(coordinate: coordinate, altitude: 300)
+        var image = UIImage(named: "location-pointer")!
+        var annotationNode = LocationAnnotationNode(location: location, image: image)
+        arView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+        
+        SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
+            self.arView.removeLocationNode(locationNode: annotationNode)
+            
+            coordinate = CLLocationCoordinate2D(latitude: Double(pos.latitude)!, longitude: Double(pos.longitude)!)
+            location = CLLocation(coordinate: coordinate, altitude: 300)
+            image = UIImage(named: "location-pointer")!
+            annotationNode = LocationAnnotationNode(location: location, image: image)
+        
+            self.arView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+        })
+    }
+    
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
