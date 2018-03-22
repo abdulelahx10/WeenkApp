@@ -173,11 +173,14 @@ class SocialSystem {
     
     /** Accepts a group request with given id*/
     func acceptGroupRequest(FromGroupID groupID: String) {
-        let isChild = CURRENT_USER_REF.child("groupRequests").child(groupID).value(forKey: "isChild") as! Bool
-        CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
-        CURRENT_USER_REF.child("groups").child(groupID).setValue(true)
-        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).child("isChild").setValue(isChild)
-        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).child("isGhostActive").setValue(false)
+        //let isChild = CURRENT_USER_REF.child("groupRequests").child(groupID).value(forKey: "isChild") as! Bool
+        CURRENT_USER_REF.child("groupRequests").child(groupID).child("isChild").observeSingleEvent(of: DataEventType.value) { (snapshot) in
+            let isChild = snapshot.value as! Bool
+            self.CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
+            self.CURRENT_USER_REF.child("groups").child(groupID).setValue(true)
+            self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isChild").setValue(isChild)
+            self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isGhostActive").setValue(false)
+        }
     }
     
     /** Unfriends the user with the specified id */
@@ -210,11 +213,14 @@ class SocialSystem {
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
         
-        let name = CURRENT_USER_REF.value(forKey: "userName") as! String
-        let message = ["message": message,
-                       "sender": name, // TODO: maybe change to sender ID insted of name
-                       "date": date]
-        CHATS_REF.child(chatID).childByAutoId().setValue(message)
+        //let name = CURRENT_USER_REF.value(forKey: "userName") as! String
+        CURRENT_USER_REF.child("userName").observeSingleEvent(of: DataEventType.value) { (snapshot) in
+            let name = snapshot.value as! String
+            let message = ["message": message,
+                           "sender": name, // TODO: maybe change to sender ID insted of name
+                           "date": date]
+            self.CHATS_REF.child(chatID).childByAutoId().setValue(message)
+        }
     }
     
     // TODO: change to other format
@@ -243,7 +249,7 @@ class SocialSystem {
     }
     
     /** update postition in the database */
-    func updatePosition(lat latitude: String, long longitude: String) -> Void {
+    func updatePosition(lat latitude: String, long longitude: String, alti altitude: String) -> Void {
         // get the current date and time
         let currentDateTime = Date()
         
@@ -257,6 +263,7 @@ class SocialSystem {
         
         let pos = ["latitude": latitude,
                     "longitude": longitude,
+                    "altitude": altitude,
                     "lastUpdatedDate": date]
         CURRENT_USER_REF.child("position").setValue(pos)
     }
@@ -267,8 +274,9 @@ class SocialSystem {
         USERS_REF.child(userID).child("position").observe(DataEventType.value, with: { (snapshot) in
             let lat = snapshot.childSnapshot(forPath: "latitude").value as! String
             let long = snapshot.childSnapshot(forPath: "longitude").value as! String
+            let alti = snapshot.childSnapshot(forPath: "altitude").value as! String
             let date = snapshot.childSnapshot(forPath: "lastUpdatedDate").value as! String
-            completion(PositionData(latitude: lat, longitude: long, date: date))
+            completion(PositionData(latitude: lat, longitude: long, altitude: alti, date: date))
         })
     }
     /** Removes the postition observer. */
