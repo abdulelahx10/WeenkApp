@@ -1,10 +1,3 @@
-//
-//  FriendsViewController.swift
-//  Weenk
-//
-//  Created by Abdulelah Alshalhoub on 14/02/2018.
-//  Copyright © 2018 ETAR. All rights reserved.
-//
 
 import Firebase
 import FirebaseAuth
@@ -121,8 +114,8 @@ class SocialSystem {
     func createGroup(WithGroupName groupName: String) -> String {
         let ref = GROUPS_REF.childByAutoId()
         let group = ["groupName": groupName,
-                   "admin": CURRENT_USER_ID,
-                   "chatId": ref.key]
+                     "admin": CURRENT_USER_ID,
+                     "chatId": ref.key]
         ref.child(ref.key).setValue(group)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
@@ -182,6 +175,7 @@ class SocialSystem {
             self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isChild").setValue(isChild)
             self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isGhostActive").setValue(false)
         }
+
     }
     
     /** Unfriends the user with the specified id */
@@ -222,6 +216,7 @@ class SocialSystem {
                            "date": date]
             self.CHATS_REF.child(chatID).childByAutoId().setValue(message)
         }
+
     }
     
     // TODO: change to other format
@@ -263,9 +258,9 @@ class SocialSystem {
         let date = formatter.string(from: currentDateTime)
         
         let pos = ["latitude": latitude,
-                    "longitude": longitude,
-                    "altitude": altitude,
-                    "lastUpdatedDate": date]
+                   "longitude": longitude,
+                   "lastUpdatedDate": date]
+
         CURRENT_USER_REF.child("position").setValue(pos)
     }
     
@@ -564,4 +559,3 @@ class SocialSystem {
         CHATS_REF.removeAllObservers()
     }
 }
-

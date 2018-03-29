@@ -8,39 +8,15 @@
 
 import UIKit
 
-class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDataSource{
+class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDataSource , UITextFieldDelegate{
    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return SocialSystem.system.messagesList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let massage = tableView.dequeueReusableCell(withIdentifier: "massageCell") as? MassageTableViewCell
-        
-        massage?.senderName.text = SocialSystem.system.messagesList[indexPath.row].sender
-        massage?.massageText.text = SocialSystem.system.messagesList[indexPath.row].message
-        
-        
-        return massage!
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
-    }
-    
-    func configureTableView(){
-        
-    }
-
-    @IBOutlet weak var userChatName: UILabel!
-    @IBAction func SendMassage(_ sender: Any) {
-        
-    }
+ 
     
     @IBOutlet weak var massageTextField: UITextField!
+    @IBOutlet weak var messageViewHC: NSLayoutConstraint!
     @IBOutlet weak var massageView: UIView!
     @IBOutlet weak var userChatImage: UIImageView!
+    @IBOutlet weak var messageTableView: UITableView!
     
     var friendChatWith: UserData?
     
@@ -49,11 +25,76 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
 
         userChatName.text = friendChatWith?.name
         
+        messageTableView.delegate = self
+        messageTableView.dataSource = self
+        
+        massageTextField.delegate = self
+        
+        SocialSystem.system.addMessageObserver(FromChatID:(friendChatWith?.fChatId)!) {
+            self.messageTableView.reloadData()
+        }
+        
+        configureTableView()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    deinit {
+        SocialSystem.system.removeMessageObserver()
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return SocialSystem.system.messagesList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let massage = tableView.dequeueReusableCell(withIdentifier: "massageCell") as? MassageTableViewCell
+        
+        massage?.clipsToBounds = true
+        massage?.layer.cornerRadius = 10
+        
+        massage?.senderName.text = SocialSystem.system.messagesList[indexPath.row].sender
+        massage?.massageText.text = SocialSystem.system.messagesList[indexPath.row].message
+        
+        if SocialSystem.system.messagesList[indexPath.row].sender == friendChatWith?.name{
+            return massage!
+        }else{
+            massage?.backgoundMassage.backgroundColor = UIColor.gray
+            massage?.massageText.textColor = UIColor.black
+        }
+        return massage!
+    }
+    
+    
+    
+    func configureTableView(){
+        messageTableView.rowHeight = UITableViewAutomaticDimension
+        messageTableView.estimatedRowHeight = 120
+    }
+    
+    @IBOutlet weak var userChatName: UILabel!
+    @IBAction func SendMassage(_ sender: UIButton) {
+        
+        SocialSystem.system.sendMessage(ToChatID: (friendChatWith?.fChatId)!, WithTheMessage: massageTextField.text!)
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        
+        UIView.animate(withDuration: 0.5) {
+            self.messageViewHC.constant = 308
+            self.view.layoutIfNeeded()
+        }
+    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+       
+        UIView.animate(withDuration: 0.5) {
+            self.messageViewHC.constant = 50
+            self.view.layoutIfNeeded()
+        }
     }
     
 
