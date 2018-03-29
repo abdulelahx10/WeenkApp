@@ -118,7 +118,7 @@ class SocialSystem {
     // MARK: - System Functions
     
     /** Create a Group and make current user the admin */
-    func createGroup(WithGroupName groupName: String) {
+    func createGroup(WithGroupName groupName: String) -> String {
         let ref = GROUPS_REF.childByAutoId()
         let group = ["groupName": groupName,
                    "admin": CURRENT_USER_ID,
@@ -126,6 +126,7 @@ class SocialSystem {
         ref.child(ref.key).setValue(group)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
+        return ref.key
     }
     
     /** Sends a friend request to the user with the specified id */
@@ -276,7 +277,7 @@ class SocialSystem {
             let long = snapshot.childSnapshot(forPath: "longitude").value as! String
             let alti = snapshot.childSnapshot(forPath: "altitude").value as! String
             let date = snapshot.childSnapshot(forPath: "lastUpdatedDate").value as! String
-            completion(PositionData(latitude: lat, longitude: long, altitude: alti, date: date))
+            completion(PositionData(latitude: lat, longitude: long, altitude: alti,  date: date))
         })
     }
     /** Removes the postition observer. */
