@@ -7,22 +7,55 @@
 //
 
 import UIKit
+import TTGSnackbar
+import SwiftCheckboxDialog
 
-struct socialListObj {
-    
-    let type:String
-    let list:[Any]
-}
-class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate{
+class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate , CheckboxDialogViewDelegate{
     
     
-   
     
-
+    func onCheckboxPickerValueChange(_ component: DialogCheckboxViewEnum, values: TranslationDictionary, textFieldValue: String) {
+        
+//        SocialSystem.system.createGroup(WithGroupName: textFieldValue)
+//        let group =
+//
+//        for (id,name) in values {
+//
+//            SocialSystem.system.sendGroupRequest(ToUserID: , userID: id, isChild: <#T##Bool#>)
+//        }
+//       
+    }
+    
+    
+    
+    
+    var checkBoxDialog : CheckboxDialogViewController!
+    
     @IBOutlet weak var tableView: UITableView!
     
-    var allSocialList = [socialListObj]()
-
+    @IBAction func NewGroup(_ sender: Any) {
+        
+        let tableData = makeFriendListDialog()
+        
+        self.checkBoxDialog = CheckboxDialogViewController()
+        self.checkBoxDialog.tableData = tableData
+        self.checkBoxDialog.titleDialog = "Group Name"
+        self.checkBoxDialog.componentName = DialogCheckboxViewEnum.countries
+        self.checkBoxDialog.delegateDialogTableView = self
+        self.checkBoxDialog.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+        self.present(self.checkBoxDialog , animated: true , completion: nil)
+        
+    }
+    
+    func makeFriendListDialog() -> [(name: String , translated: String)] {
+        
+        var list : [(name: String , translated: String)] = []
+        for friend in SocialSystem.system.friendList {
+            list.append((name: friend.id, translated: friend.name))
+        }
+        
+        return list
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -144,8 +177,13 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     }
     
     func didTapTrack(_ sender: FriendTableViewCell) {
+        
+       
         guard let tappedIndexPath = tableView.indexPath(for: sender) else { return}
-        print("start Tracking \(SocialSystem.system.friendList[tappedIndexPath.row].name)")
+        
+        SocialSystem.system.sendTrackRequest(ToUserID: SocialSystem.system.friendList[tappedIndexPath.row].id)
+         let snackbar = TTGSnackbar(message: "Tracking Request sent to \(SocialSystem.system.friendList[tappedIndexPath.row].name!)", duration: .short)
+        snackbar.show()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

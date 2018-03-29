@@ -1,10 +1,3 @@
-//
-//  FriendsViewController.swift
-//  Weenk
-//
-//  Created by Abdulelah Alshalhoub on 14/02/2018.
-//  Copyright © 2018 ETAR. All rights reserved.
-//
 
 import Firebase
 import FirebaseAuth
@@ -106,11 +99,11 @@ class SocialSystem {
     /** Gets the message object for the specified message id */
     func getMessage(_ chatID: String, _ messageID: String, completion: @escaping (MessageData) -> Void) {
         CHATS_REF.child(chatID).child(messageID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
-            let sender = snapshot.childSnapshot(forPath: "sender").value as? String
-            let message = snapshot.childSnapshot(forPath: "message").value as? String
-            let date = snapshot.childSnapshot(forPath: "date").value as? String
+            let sender = snapshot.childSnapshot(forPath: "sender").value as! String
+            let message = snapshot.childSnapshot(forPath: "message").value as! String
+            let date = snapshot.childSnapshot(forPath: "date").value as! String
             let id = snapshot.key
-            completion(MessageData(sender: sender!, id: id, message: message!, date: date!))
+            completion(MessageData(sender: sender, id: id, message: message, date: date))
             
         })
     }
@@ -121,8 +114,8 @@ class SocialSystem {
     func createGroup(WithGroupName groupName: String) {
         let ref = GROUPS_REF.childByAutoId()
         let group = ["groupName": groupName,
-                   "admin": CURRENT_USER_ID,
-                   "chatId": ref.key]
+                     "admin": CURRENT_USER_ID,
+                     "chatId": ref.key]
         ref.child(ref.key).setValue(group)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
@@ -173,11 +166,15 @@ class SocialSystem {
     
     /** Accepts a group request with given id*/
     func acceptGroupRequest(FromGroupID groupID: String) {
-        let isChild = CURRENT_USER_REF.child("groupRequests").child(groupID).value(forKey: "isChild") as! Bool
-        CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
-        CURRENT_USER_REF.child("groups").child(groupID).setValue(true)
-        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).child("isChild").setValue(isChild)
-        GROUPS_REF.child(groupID).child("members").child(CURRENT_USER_ID).child("isGhostActive").setValue(false)
+        //let isChild = CURRENT_USER_REF.child("groupRequests").child(groupID).value(forKey: "isChild") as! Bool
+        CURRENT_USER_REF.child("groupRequests").child(groupID).child("isChild").observeSingleEvent(of: DataEventType.value) { (snapshot) in
+            let isChild = snapshot.value as! Bool
+            self.CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
+            self.CURRENT_USER_REF.child("groups").child(groupID).setValue(true)
+            self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isChild").setValue(isChild)
+            self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isGhostActive").setValue(false)
+        }
+
     }
     
     /** Unfriends the user with the specified id */
@@ -210,11 +207,15 @@ class SocialSystem {
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
         
-        let name = CURRENT_USER_REF.value(forKey: "userName") as! String
-        let message = ["message": message,
-                       "sender": name, // TODO: maybe change to sender ID insted of name
-                       "date": date]
-        CHATS_REF.child(chatID).childByAutoId().setValue(message)
+        //let name = CURRENT_USER_REF.value(forKey: "userName") as! String
+        CURRENT_USER_REF.child("userName").observeSingleEvent(of: DataEventType.value) { (snapshot) in
+            let name = snapshot.value as! String
+            let message = ["message": message,
+                           "sender": name, // TODO: maybe change to sender ID insted of name
+                           "date": date]
+            self.CHATS_REF.child(chatID).childByAutoId().setValue(message)
+        }
+
     }
     
     // TODO: change to other format
@@ -256,8 +257,8 @@ class SocialSystem {
         let date = formatter.string(from: currentDateTime)
         
         let pos = ["latitude": latitude,
-                    "longitude": longitude,
-                    "lastUpdatedDate": date]
+                   "longitude": longitude,
+                   "lastUpdatedDate": date]
         CURRENT_USER_REF.child("position").setValue(pos)
     }
     
@@ -555,4 +556,3 @@ class SocialSystem {
         CHATS_REF.removeAllObservers()
     }
 }
-

@@ -34,6 +34,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     @IBOutlet weak var dropDownBtn: UIButton!
     
     var friendTrackingID : String!
+    var nodeWithIDList : [String : LocationNode] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,8 +62,9 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         
         mapView.logoView.isHidden = true
         mapView.attributionButton.isHidden = true
-
-      
+        
+        dropDownBtn.clipsToBounds = true
+        dropDownBtn.layer.cornerRadius = 10
      
        
         
@@ -140,6 +142,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         let location = locations[locations.count - 1];
         if location.horizontalAccuracy > 0 {
             SocialSystem.system.updatePosition(lat: "\(location.coordinate.latitude)", long: "\(location.coordinate.longitude)")
+            print(location.altitude)
         }
     }
     
@@ -170,7 +173,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        dropDownBtn.setTitle("Tracking: \(SocialSystem.system.friendList[indexPath.row].name!)", for: .normal)
+        dropDownBtn.setTitle("    Tracking: \(SocialSystem.system.friendList[indexPath.row].name!)", for: .normal)
         UIView.animate(withDuration: 0.5) {
             
             self.dropDownTableHC.constant = 0
@@ -180,24 +183,35 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         
         friendTrackingID = SocialSystem.system.friendList[indexPath.row].id
         
-        var coordinate = CLLocationCoordinate2D(latitude: 0.00, longitude: 0.00)
-        var location = CLLocation(coordinate: coordinate, altitude: 300)
-        var image = UIImage(named: "location-pointer")!
-        var annotationNode = LocationAnnotationNode(location: location, image: image)
-        arView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+
         
         SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
-            self.arView.removeLocationNode(locationNode: annotationNode)
             
-            coordinate = CLLocationCoordinate2D(latitude: Double(pos.latitude)!, longitude: Double(pos.longitude)!)
-            location = CLLocation(coordinate: coordinate, altitude: 300)
-            image = UIImage(named: "location-pointer")!
-            annotationNode = LocationAnnotationNode(location: location, image: image)
-        
-            self.arView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+            if self.nodeWithIDList[self.friendTrackingID] != nil {
+                
+                self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
+                
+            }
+            
+            var newNode = self.makeARmarker(latitude: pos.latitude, longitude: pos.longitude)
+            
+            self.nodeWithIDList[self.friendTrackingID] = newNode
+            self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
+            
         })
     }
     
+    func makeARmarker(latitude:String , longitude:String) -> LocationAnnotationNode {
+        
+        var lat = Double(latitude)
+        var lon = Double(longitude)
+        var coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
+        var location = CLLocation(coordinate: coordinate, altitude: 600)
+        var image = UIImage(named: "location-pointer")!
+        var annotationNode = LocationAnnotationNode(location: location, image: image)
+        
+        return annotationNode
+    }
 
     
     override func didReceiveMemoryWarning() {

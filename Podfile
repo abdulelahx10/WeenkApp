@@ -20,6 +20,8 @@ target 'Weenk' do
     pod 'ARCL'
     pod 'Motion'
     pod 'DropDown'
+    pod 'TTGSnackbar'
+    pod 'SwiftCheckboxDialog'
    
 end
 

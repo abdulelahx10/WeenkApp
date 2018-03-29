@@ -91,6 +91,8 @@ PODS:
     - SDWebImage/Core (= 4.3.0)
   - SDWebImage/Core (4.3.0)
   - Solar (2.1.0)
+  - SwiftCheckboxDialog (1.0.0)
+  - TTGSnackbar (1.7.1)
   - Turf (0.0.4)
   - TwitterCore (3.1.0)
   - TwitterKit (3.3.0):
@@ -109,6 +111,8 @@ DEPENDENCIES:
   - Mapbox-iOS-SDK
   - MapboxNavigation
   - Motion
+  - SwiftCheckboxDialog
+  - TTGSnackbar
   - TwitterKit
 
 SPEC CHECKSUMS:
@@ -138,10 +142,12 @@ SPEC CHECKSUMS:
   Polyline: 3d69f75bb136357e27291d439d0436c6ebda57a4
   SDWebImage: 6da6c8bca115addc4de8613362e1b15f66333825
   Solar: 2dc6e7cc39186cb0c8228fa08df76fb50c7d8f24
+  SwiftCheckboxDialog: 961526e6a278298b2c7857cd4a5a1e7f034ddb6b
+  TTGSnackbar: 26e9c1f842269d0eeae8c51f7d8cbea669d492f1
   Turf: 6c169618fa671e3f8a7b764b5b3332053ad6110e
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: 873437bb2b4d872bd3d6e6cff910a58d2f721f05
+PODFILE CHECKSUM: 03d731dd696cafc52dc5be523dbe040bd1d578e2
 
 COCOAPODS: 1.4.0

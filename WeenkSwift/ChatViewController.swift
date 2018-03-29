@@ -54,6 +54,9 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
         
         let massage = tableView.dequeueReusableCell(withIdentifier: "massageCell") as? MassageTableViewCell
         
+        massage?.clipsToBounds = true
+        massage?.layer.cornerRadius = 10
+        
         massage?.senderName.text = SocialSystem.system.messagesList[indexPath.row].sender
         massage?.massageText.text = SocialSystem.system.messagesList[indexPath.row].message
         
