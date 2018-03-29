@@ -111,7 +111,7 @@ class SocialSystem {
     // MARK: - System Functions
     
     /** Create a Group and make current user the admin */
-    func createGroup(WithGroupName groupName: String) {
+    func createGroup(WithGroupName groupName: String) -> String {
         let ref = GROUPS_REF.childByAutoId()
         let group = ["groupName": groupName,
                      "admin": CURRENT_USER_ID,
@@ -119,6 +119,7 @@ class SocialSystem {
         ref.child(ref.key).setValue(group)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
+        return ref.key
     }
     
     /** Sends a friend request to the user with the specified id */
@@ -244,7 +245,7 @@ class SocialSystem {
     }
     
     /** update postition in the database */
-    func updatePosition(lat latitude: String, long longitude: String) -> Void {
+    func updatePosition(lat latitude: String, long longitude: String, alti altitude: String) -> Void {
         // get the current date and time
         let currentDateTime = Date()
         
@@ -259,6 +260,7 @@ class SocialSystem {
         let pos = ["latitude": latitude,
                    "longitude": longitude,
                    "lastUpdatedDate": date]
+
         CURRENT_USER_REF.child("position").setValue(pos)
     }
     
@@ -268,8 +270,9 @@ class SocialSystem {
         USERS_REF.child(userID).child("position").observe(DataEventType.value, with: { (snapshot) in
             let lat = snapshot.childSnapshot(forPath: "latitude").value as! String
             let long = snapshot.childSnapshot(forPath: "longitude").value as! String
+            let alti = snapshot.childSnapshot(forPath: "altitude").value as! String
             let date = snapshot.childSnapshot(forPath: "lastUpdatedDate").value as! String
-            completion(PositionData(latitude: lat, longitude: long, date: date))
+            completion(PositionData(latitude: lat, longitude: long, altitude: alti,  date: date))
         })
     }
     /** Removes the postition observer. */
