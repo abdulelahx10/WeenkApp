@@ -13,6 +13,12 @@ import SwiftCheckboxDialog
 class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate , CheckboxDialogViewDelegate{
     
     
+    func onCheckboxPickerValueChange(_ component: DialogCheckboxViewEnum, values: TranslationDictionary) {
+        ///
+    }
+    
+    
+    
     
     func onCheckboxPickerValueChange(_ component: DialogCheckboxViewEnum, values: TranslationDictionary, textFieldValue: String) {
         
@@ -78,6 +84,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     deinit {
         // set up what needs to be deinitialized when view is no longer being used
         SocialSystem.system.removeFriendObserver()
+        SocialSystem.system.removeRequestObserver()
     }
 
     override func didReceiveMemoryWarning() {
@@ -126,6 +133,9 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
            
             let cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell") as? FriendTableViewCell
             
+            if !SocialSystem.system.friendList.indices.contains(indexPath.row){
+                return UITableViewCell()
+            }
             cell?.userName.text = SocialSystem.system.friendList[indexPath.row].name
             cell?.delegate = self
             
@@ -136,14 +146,18 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         
         case 2:
             
+            
             print("type friendRequst")
             
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FriendRequstCell") as! FriendRequstTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FriendRequstCell") as? FriendRequstTableViewCell
             
-            cell.userName.text = SocialSystem.system.friendRequestList[indexPath.row].name
-            cell.delegate = self
+            if !SocialSystem.system.friendRequestList.indices.contains(indexPath.row){
+                return UITableViewCell()
+            }
+            cell?.userName.text = SocialSystem.system.friendRequestList[indexPath.row].name
+            cell?.delegate = self
             
-            return cell
+            return cell!
             
         default:
             return UITableViewCell()

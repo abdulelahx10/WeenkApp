@@ -12,7 +12,6 @@ import Mapbox
 import ARCL
 import Motion
 import CoreLocation
-import DropDown
 
 class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewDelegate , UITableViewDataSource{
    
@@ -34,7 +33,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     @IBOutlet weak var dropDownBtn: UIButton!
     
     var friendTrackingID : String!
-    var nodeWithIDList : [String : LocationNode] = []
+    var nodeWithIDList : [String : LocationNode] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -141,7 +140,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
        
         let location = locations[locations.count - 1];
         if location.horizontalAccuracy > 0 {
-            SocialSystem.system.updatePosition(lat: "\(location.coordinate.latitude)", long: "\(location.coordinate.longitude)")
+            SocialSystem.system.updatePosition(lat: "\(location.coordinate.latitude)", long: "\(location.coordinate.longitude)", alti: "\(location.altitude)")
             print(location.altitude)
         }
     }
@@ -188,12 +187,10 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
             
             if self.nodeWithIDList[self.friendTrackingID] != nil {
-                
                 self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
-                
             }
             
-            var newNode = self.makeARmarker(latitude: pos.latitude, longitude: pos.longitude)
+            var newNode = self.makeARmarker(latitude: pos.latitude, longitude: pos.longitude , altitude: pos.altitude)
             
             self.nodeWithIDList[self.friendTrackingID] = newNode
             self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
@@ -201,14 +198,16 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         })
     }
     
-    func makeARmarker(latitude:String , longitude:String) -> LocationAnnotationNode {
+    func makeARmarker(latitude:String , longitude:String , altitude:String) -> LocationAnnotationNode {
         
         var lat = Double(latitude)
         var lon = Double(longitude)
+        var alt = Double(altitude)
         var coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
-        var location = CLLocation(coordinate: coordinate, altitude: 600)
+        var location = CLLocation(coordinate: coordinate, altitude: alt!)
         var image = UIImage(named: "location-pointer")!
         var annotationNode = LocationAnnotationNode(location: location, image: image)
+        annotationNode.scaleRelativeToDistance = true
         
         return annotationNode
     }
