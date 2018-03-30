@@ -36,11 +36,13 @@ class PositionData {
     
     var latitude: String!
     var longitude: String!
+    var altitude: String!
     var lastUpdatedDate: String!
     
-    init(latitude: String, longitude: String, date: String) {
+    init(latitude: String, longitude: String, altitude: String, date: String) {
         self.latitude = latitude
         self.longitude = longitude
+        self.altitude = altitude
         self.lastUpdatedDate = date
     }
     
