@@ -10,7 +10,7 @@ import UIKit
 import TTGSnackbar
 import SwiftCheckboxDialog
 
-class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate , CheckboxDialogViewDelegate{
+class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate,GroupRequstTableViewCellDelegate , CheckboxDialogViewDelegate{
     
     
     func onCheckboxPickerValueChange(_ component: DialogCheckboxViewEnum, values: TranslationDictionary) {
@@ -19,17 +19,30 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     
     
     
+    var childModelShowed : Bool = false
     
     func onCheckboxPickerValueChange(_ component: DialogCheckboxViewEnum, values: TranslationDictionary, textFieldValue: String) {
+      
+        let newGroupID = SocialSystem.system.createGroup(WithGroupName: textFieldValue)
         
-//        SocialSystem.system.createGroup(WithGroupName: textFieldValue)
-//        let group =
-//
-//        for (id,name) in values {
-//
-//            SocialSystem.system.sendGroupRequest(ToUserID: , userID: id, isChild: <#T##Bool#>)
-//        }
-//       
+        for (id,name) in values {
+            
+            var isChild : Bool = false
+            let alert = UIAlertController(title: "child", message: "is \(name) a child", preferredStyle: .alert)
+            let yesAction = UIAlertAction(title: "yes", style: .default, handler: { (action) in
+                isChild = true
+            })
+            let noAction = UIAlertAction(title: "no", style: .cancel, handler: { (action) in
+                isChild = false
+            })
+            
+            alert.addAction(yesAction)
+            alert.addAction(noAction)
+            self.present(alert, animated: true)
+            
+            SocialSystem.system.sendGroupRequest(ToUserID: id, userID: newGroupID, isChild: isChild)
+        }
+       
     }
     
     
@@ -50,8 +63,12 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         self.checkBoxDialog.delegateDialogTableView = self
         self.checkBoxDialog.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
         self.present(self.checkBoxDialog , animated: true , completion: nil)
+        childModelShowed = false
         
     }
+    
+   
+    
     
     func makeFriendListDialog() -> [(name: String , translated: String)] {
         
@@ -80,6 +97,15 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             self.tableView.reloadData()
         }
         
+        SocialSystem.system.addGroupRequestObserver {
+            self.tableView.reloadData()
+        }
+        
+        SocialSystem.system.addUserGroupsObserver {
+            self.tableView.reloadData()
+        }
+        
+        
     }
     deinit {
         // set up what needs to be deinitialized when view is no longer being used
@@ -97,7 +123,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -117,6 +143,9 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         
         case 2:
             return SocialSystem.system.friendRequestList.count
+            
+        case 3:
+            return SocialSystem.system.groupRequestList.count
       
         default:
            return -1
@@ -142,8 +171,18 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             return cell!
         
         case 1:
-            return UITableViewCell()
-        
+           
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell") as? FriendTableViewCell
+            
+            if !SocialSystem.system.userGroupdList.indices.contains(indexPath.row){
+                return UITableViewCell()
+            }
+            cell?.userName.text = SocialSystem.system.userGroupdList[indexPath.row].groupName
+            cell?.trackBtn.isEnabled = false
+            cell?.trackBtn.isHidden = true
+            cell?.delegate = self
+            
+            return cell!
         case 2:
             
             
@@ -159,6 +198,17 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             
             return cell!
             
+        case 3:
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "GroupRequstCell") as? GroupRequstTableViewCell
+            
+            if !SocialSystem.system.groupRequestList.indices.contains(indexPath.row){
+                return UITableViewCell()
+            }
+            cell?.groupName.text = " \(SocialSystem.system.groupRequestList[indexPath.row].groupName)"
+            cell?.delegate = self
+            
+            return cell!
         default:
             return UITableViewCell()
         }
@@ -179,6 +229,9 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             
         case 2:
             return "friendRequst"
+            
+        case 3:
+            return "Group Requst"
         default:
             return "none"
         }
@@ -188,6 +241,13 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         SocialSystem.system.acceptFriendRequest(FromUserID: SocialSystem.system.friendRequestList[tappedIndexPath.row].id)
         self.tableView.reloadData()
         print("accpted")
+    }
+    
+    func didTapAcceptGroup(_ sender: GroupRequstTableViewCell) {
+        guard let tappedIndexPath = tableView.indexPath(for: sender) else { return}
+        SocialSystem.system.acceptGroupRequest(FromGroupID: SocialSystem.system.groupRequestList[tappedIndexPath.row].id)
+        self.tableView.reloadData()
+        print("group accpted")
     }
     
     func didTapTrack(_ sender: FriendTableViewCell) {
@@ -205,7 +265,11 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         
         if indexPath.section == 0{
             performSegue(withIdentifier: "chatWithFriend", sender: self)
+        }else if indexPath.section == 1 {
+             performSegue(withIdentifier: "chatWithGroup", sender: self)
         }
+        
+    
        
     }
     

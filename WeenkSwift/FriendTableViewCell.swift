@@ -12,6 +12,7 @@ class FriendTableViewCell: UITableViewCell {
 
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var trackBtn: UIButton!
     
     weak var delegate:FriendTableViewCellDelegate?
     
