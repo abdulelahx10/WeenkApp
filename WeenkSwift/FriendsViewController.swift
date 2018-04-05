@@ -167,7 +167,10 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             }
             cell?.userName.text = SocialSystem.system.friendList[indexPath.row].name
             cell?.delegate = self
-            
+            let friendID = SocialSystem.system.friendList[indexPath.row].id
+            if SocialSystem.system.AcceptedTrackingUserIDList.contains(friendID!) {
+                ////
+            }
             return cell!
         
         case 1:
@@ -256,7 +259,8 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         guard let tappedIndexPath = tableView.indexPath(for: sender) else { return}
         
         SocialSystem.system.sendTrackRequest(ToUserID: SocialSystem.system.friendList[tappedIndexPath.row].id)
-         let snackbar = TTGSnackbar(message: "Tracking Request sent to \(SocialSystem.system.friendList[tappedIndexPath.row].name!)", duration: .short)
+        
+        let snackbar = TTGSnackbar(message: "Tracking Request sent to \(SocialSystem.system.friendList[tappedIndexPath.row].name!)", duration: .short)
         snackbar.show()
     }
     
