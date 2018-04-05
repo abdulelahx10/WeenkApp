@@ -100,10 +100,11 @@ class SocialSystem {
     func getMessage(_ chatID: String, _ messageID: String, completion: @escaping (MessageData) -> Void) {
         CHATS_REF.child(chatID).child(messageID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             let sender = snapshot.childSnapshot(forPath: "sender").value as! String
+            let senderID = snapshot.childSnapshot(forPath: "senderID").value as! String
             let message = snapshot.childSnapshot(forPath: "message").value as! String
             let date = snapshot.childSnapshot(forPath: "date").value as! String
             let id = snapshot.key
-            completion(MessageData(sender: sender, id: id, message: message, date: date))
+            completion(MessageData(sender: sender, senderID: senderID, id: id, message: message, date: date))
             
         })
     }
@@ -165,6 +166,11 @@ class SocialSystem {
         USERS_REF.child(userID).child("friendRequests").child(CURRENT_USER_ID).removeValue()
     }
     
+    /** Reject a friend request from the user with the specified id */
+    func rejectFriendRequest(FromUserID userID: String) {
+        CURRENT_USER_REF.child("friendRequests").child(userID).removeValue()
+    }
+    
     /** Accepts a group request with given id*/
     func acceptGroupRequest(FromGroupID groupID: String) {
         //let isChild = CURRENT_USER_REF.child("groupRequests").child(groupID).value(forKey: "isChild") as! Bool
@@ -175,7 +181,11 @@ class SocialSystem {
             self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isChild").setValue(isChild)
             self.GROUPS_REF.child(groupID).child("members").child(self.CURRENT_USER_ID).child("isGhostActive").setValue(false)
         }
-
+    }
+    
+    /** Reject a group request from the user with the specified id */
+    func rejectGroupRequest(FromGroupID groupID: String) {
+        CURRENT_USER_REF.child("groupRequests").child(groupID).removeValue()
     }
     
     /** Unfriends the user with the specified id */
@@ -212,7 +222,8 @@ class SocialSystem {
         CURRENT_USER_REF.child("userName").observeSingleEvent(of: DataEventType.value) { (snapshot) in
             let name = snapshot.value as! String
             let message = ["message": message,
-                           "sender": name, // TODO: maybe change to sender ID insted of name
+                           "sender": name,
+                           "senderID": CURRENT_USER_ID,
                            "date": date]
             self.CHATS_REF.child(chatID).childByAutoId().setValue(message)
         }
@@ -242,6 +253,11 @@ class SocialSystem {
         CURRENT_USER_REF.child("acceptedTracking").child(userID).setValue(true)
         USERS_REF.child(userID).child("acceptedTracking").child(CURRENT_USER_ID).setValue(true)
         USERS_REF.child(userID).child("trackRequests").child(CURRENT_USER_ID).removeValue()
+    }
+    
+    /** Reject a track request from the user with the specified id */
+    func rejectTrackRequest(FromUserID userID: String) {
+        CURRENT_USER_REF.child("trackRequests").child(userID).removeValue()
     }
     
     /** update postition in the database */
@@ -281,7 +297,7 @@ class SocialSystem {
         USERS_REF.removeAllObservers()
     }
     
-    
+
     // MARK: - All Accepted tracking users
     /** The list of all Accepted tracking users ID */
     var AcceptedTrackingUserIDList = [String]()
@@ -383,6 +399,11 @@ class SocialSystem {
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.fChatId = child.value as! String
+                    if child.childSnapshot(forPath: "acceptedTracking").exists() && child.childSnapshot(forPath: "acceptedTracking").hasChild(id){
+                        user.fIsTracked = true
+                    } else if child.childSnapshot(forPath: "trackRequests").exists() && child.childSnapshot(forPath: "trackRequests").hasChild(id){
+                        user.fIsTrackRequested = true
+                    }
                     self.friendList.append(user)
                     self.group.leave()
                 })
@@ -520,9 +541,11 @@ class SocialSystem {
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
                 let sentTime = child.childSnapshot(forPath: "sentTime").value as! String
+                let amIChild = child.childSnapshot(forPath: "isChild").value as! Bool
                 self.group.enter()
                 self.getGroup(id, completion: { (group) in
                     group.reqSentTime = sentTime
+                    group.amIChild = amIChild
                     self.groupRequestList.append(group)
                     self.group.leave()
                 })

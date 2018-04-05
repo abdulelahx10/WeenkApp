@@ -14,6 +14,8 @@ class UserData {
     var photoURL: String!
     var id: String!
     var fChatId: String! = ""
+    var fIsTracked: Bool! = false
+    var fIsTrackRequested: Bool! = false
     var gIsChild: Bool! = false
     var gIsGhostActive: Bool! = false
     var sIsFriend: Bool! = false
@@ -55,6 +57,7 @@ class GroupData {
     var id: String!
     var adminId: String!
     var chatId: String!
+    var amIChild: Bool!
     var reqSentTime: String!
     //var groupdMembersList = [UserData]()
     
@@ -86,13 +89,15 @@ class ChatData {
 class MessageData {
     
     var sender: String!
+    var senderID: String!
     var id: String!
     var message: String!
     var date: String!
     
     
-    init(sender: String, id: String, message: String, date: String) {
+    init(sender: String, senderID: String, id: String, message: String, date: String) {
         self.sender = sender
+        self.senderID = senderID
         self.id = id
         self.message = message
         self.date = date
