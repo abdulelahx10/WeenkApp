@@ -21,6 +21,7 @@ target 'Weenk' do
     pod 'Motion'
     pod 'TTGSnackbar'
     pod 'SwiftCheckboxDialog'
+    pod 'GeoFire'
    
 end
 

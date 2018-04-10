@@ -1,6 +1,7 @@
 
 import Firebase
 import FirebaseAuth
+import GeoFire
 
 class SocialSystem {
     
@@ -9,6 +10,7 @@ class SocialSystem {
     // MARK: - Firebase references
     /** The base Firebase reference */
     let BASE_REF = Database.database().reference()
+    
     /* The user Firebase reference */
     let USERS_REF = Database.database().reference().child("users")
     /* The group Firebase reference */
@@ -21,6 +23,11 @@ class SocialSystem {
     var CURRENT_USER_REF: DatabaseReference {
         let id = Auth.auth().currentUser!.uid
         return USERS_REF.child("\(id)")
+    }
+    
+    /** The GeoFire object */
+    var GEOFIRE: GeoFire {
+        return GeoFire(firebaseRef: BASE_REF)
     }
     
     /** The Firebase reference to the current user's friend tree */
@@ -140,7 +147,7 @@ class SocialSystem {
     }
     
     /** Sends a group request with given groupID to the user with the specified id */
-    func sendGroupRequest(ToUserID groupID: String, userID: String, isChild: Bool) {
+    func sendGroupRequest(ToUserID userID: String, ForUserID groupID: String, isChild: Bool) {
         // get the current date and time
         let currentDateTime = Date()
         
@@ -279,6 +286,7 @@ class SocialSystem {
                    "lastUpdatedDate": date]
 
         CURRENT_USER_REF.child("position").setValue(pos)
+        GEOFIRE.setLocation(CLLocation(latitude: Double(latitude)!, longitude: Double(longitude)!), forKey: CURRENT_USER_ID)
     }
     
     // MARK: - postition
@@ -368,11 +376,12 @@ class SocialSystem {
                 if email != Auth.auth().currentUser?.email! {
                     self.group.enter()
                     self.getUser(id, completion: { (user) in
-                        if child.childSnapshot(forPath: "friends").exists() && child.childSnapshot(forPath: "friends").hasChild(self.CURRENT_USER_ID){
-                            user.sIsFriend = true
-                        } else if child.childSnapshot(forPath: "friendRequests").exists() && child.childSnapshot(forPath: "friendRequests").hasChild(self.CURRENT_USER_ID){
-                            user.sIsFriendRequested = true
-                        }
+                        self.USERS_REF.child(id).child("friends").observeSingleEvent(of: .value, with: { (snapshot) in
+                            user.sIsFriend = snapshot.hasChild(self.CURRENT_USER_ID)
+                        })
+                        self.USERS_REF.child(id).child("friendRequests").observeSingleEvent(of: .value, with: { (snapshot) in
+                            user.sIsFriendRequested = snapshot.hasChild(self.CURRENT_USER_ID)
+                        })
                         self.searchedUsersList.append(user)
                         self.group.leave()
                     })
@@ -399,11 +408,12 @@ class SocialSystem {
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.fChatId = child.value as! String
-                    if child.childSnapshot(forPath: "acceptedTracking").exists() && child.childSnapshot(forPath: "acceptedTracking").hasChild(id){
-                        user.fIsTracked = true
-                    } else if child.childSnapshot(forPath: "trackRequests").exists() && child.childSnapshot(forPath: "trackRequests").hasChild(id){
-                        user.fIsTrackRequested = true
-                    }
+                    self.USERS_REF.child(id).child("acceptedTracking").observeSingleEvent(of: .value, with: { (snapshot) in
+                        user.fIsTracked = snapshot.hasChild(self.CURRENT_USER_ID)
+                    })
+                    self.USERS_REF.child(id).child("trackRequests").observeSingleEvent(of: .value, with: { (snapshot) in
+                        user.fIsTrackRequested = snapshot.hasChild(self.CURRENT_USER_ID)
+                    })
                     self.friendList.append(user)
                     self.group.leave()
                 })
@@ -423,11 +433,12 @@ class SocialSystem {
                 self.group.enter()
                 self.getUser(id, completion: { (user) in
                     user.fChatId = child.value as! String
-                    if child.childSnapshot(forPath: "groups").exists() && child.childSnapshot(forPath: "groups").hasChild(groupID){
-                        user.gsIsInThisGroup = true
-                    } else if child.childSnapshot(forPath: "groupRequests").exists() && child.childSnapshot(forPath: "groupRequests").hasChild(groupID){
-                        user.gsIsInThisGroupRequested = true
-                    }
+                    self.USERS_REF.child(id).child("groups").observeSingleEvent(of: .value, with: { (snapshot) in
+                        user.gsIsInThisGroup = snapshot.hasChild(groupID)
+                    })
+                    self.USERS_REF.child(id).child("groupRequests").observeSingleEvent(of: .value, with: { (snapshot) in
+                        user.gsIsInThisGroupRequested = snapshot.hasChild(groupID)
+                    })
                     self.friendList.append(user)
                     self.group.leave()
                 })

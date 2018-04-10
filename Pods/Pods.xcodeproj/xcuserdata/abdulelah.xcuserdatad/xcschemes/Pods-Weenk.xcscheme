@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "24E92F4331BCA83B65355536C121ACA6"
+               BlueprintIdentifier = "64DE2739122E428C9F8C5D307D246BF0"
                BuildableName = "Pods_Weenk.framework"
                BlueprintName = "Pods-Weenk"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -26,7 +26,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -37,7 +36,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -47,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "24E92F4331BCA83B65355536C121ACA6"
+            BlueprintIdentifier = "64DE2739122E428C9F8C5D307D246BF0"
             BuildableName = "Pods_Weenk.framework"
             BlueprintName = "Pods-Weenk"
             ReferencedContainer = "container:Pods.xcodeproj">
