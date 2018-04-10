@@ -34,6 +34,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     
     var friendTrackingID : String!
     var nodeWithIDList : [String : LocationNode] = [:]
+    var arMarker : [UIImage] = [UIImage(named:"marker-1")!,UIImage(named:"marker-2")!,UIImage(named:"marker-3")!,UIImage(named:"marker-4")!]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -170,6 +171,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        
         tableView.deselectRow(at: indexPath, animated: true)
         
         dropDownBtn.setTitle("    Tracking: \(SocialSystem.system.friendList[indexPath.row].name!)", for: .normal)
@@ -181,21 +183,18 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         }
         
         friendTrackingID = SocialSystem.system.friendList[indexPath.row].id
-        
-
-        
+       
         SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
             
-            if self.nodeWithIDList[self.friendTrackingID] != nil {
-                self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
+            if self.nodeWithIDList[self.friendTrackingID] == nil {
+                 self.nodeWithIDList[self.friendTrackingID] = self.makeARmarker(latitude: pos.latitude, longitude: pos.longitude , altitude: pos.altitude)
             }
             
-            var newNode = self.makeARmarker(latitude: pos.latitude, longitude: pos.longitude , altitude: pos.altitude)
-            
-            self.nodeWithIDList[self.friendTrackingID] = newNode
-            self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
-            
         })
+        if self.nodeWithIDList[self.friendTrackingID] != nil{
+            arView.addLocationNodeWithConfirmedLocation(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
+             self.nodeWithIDList[self.friendTrackingID] = nil
+        }
     }
     
     func makeARmarker(latitude:String , longitude:String , altitude:String) -> LocationAnnotationNode {
@@ -205,7 +204,8 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         var alt = Double(altitude)
         var coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
         var location = CLLocation(coordinate: coordinate, altitude: alt!)
-        var image = UIImage(named: "location-pointer")!
+        var image = UIImage.animatedImage(with: arMarker, duration:0.5)!
+        
         var annotationNode = LocationAnnotationNode(location: location, image: image)
         annotationNode.scaleRelativeToDistance = true
         

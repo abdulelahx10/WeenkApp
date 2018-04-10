@@ -83,7 +83,7 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
             
             let myUserData : UserData
             
-            if SocialSystem.system.messagesList[indexPath.row].sender != SocialSystem.system.CURRENT_USER_ID {
+            if SocialSystem.system.messagesList[indexPath.row].senderID != SocialSystem.system.CURRENT_USER_ID {
                 return massage!
             }else{
                 massage?.backgoundMassage.backgroundColor = UIColor.gray

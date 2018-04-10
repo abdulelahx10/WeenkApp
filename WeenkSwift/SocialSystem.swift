@@ -223,7 +223,7 @@ class SocialSystem {
             let name = snapshot.value as! String
             let message = ["message": message,
                            "sender": name,
-                           "senderID": CURRENT_USER_ID,
+                           "senderID": self.CURRENT_USER_ID,
                            "date": date]
             self.CHATS_REF.child(chatID).childByAutoId().setValue(message)
         }
