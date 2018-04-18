@@ -21,6 +21,7 @@
 		5BBC6457202F18B100D7FA3B /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBC6456202F18B100D7FA3B /* SignInViewController.swift */; };
 		5BC944A7202F8F2A00B29D0A /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC944A6202F8F2A00B29D0A /* ARViewController.swift */; };
 		73A78AF1483B2048027DE88D /* Pods_Weenk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3630B2F1DB44B9354EA3AA25 /* Pods_Weenk.framework */; };
+		B4236D17208235AF00C90C00 /* AddZoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4236D16208235AF00C90C00 /* AddZoneViewController.swift */; };
 		B42C3AAC20481EA3005C44D1 /* FriendRequstTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */; };
 		B42C3AAE2048440A005C44D1 /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */; };
 		B42D6FDD2040315600CB0FDC /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */; };
@@ -52,6 +53,7 @@
 		5BBC6456202F18B100D7FA3B /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		5BC944A6202F8F2A00B29D0A /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		B4036B583934A0B257F3EDCE /* Pods-Weenk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Weenk.release.xcconfig"; path = "Pods/Target Support Files/Pods-Weenk/Pods-Weenk.release.xcconfig"; sourceTree = "<group>"; };
+		B4236D16208235AF00C90C00 /* AddZoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddZoneViewController.swift; sourceTree = "<group>"; };
 		B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequstTableViewCell.swift; sourceTree = "<group>"; };
 		B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendTableViewCell.swift; sourceTree = "<group>"; };
 		B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */,
 				B4A21A6E2073A1AC00731C9E /* GroupRequstTableViewCell.swift */,
 				B43048A120653B4D00AD0E33 /* NewGroupViewController.swift */,
+				B4236D16208235AF00C90C00 /* AddZoneViewController.swift */,
 				B43048A320653D2600AD0E33 /* FriendAddToGroupCell.swift */,
 				B49BE5E520519B810040440B /* ChatViewController.swift */,
 				B4A21A722073CD9F00731C9E /* TrackingRequstCell.swift */,
@@ -285,8 +288,6 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Weenk/Pods-Weenk-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ARCL/ARCL.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSPolly/AWSPolly.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GeoFire/GeoFire.framework",
@@ -297,9 +298,9 @@
 				"${BUILT_PRODUCTS_DIR}/MapboxDirections.swift/MapboxDirections.framework",
 				"${BUILT_PRODUCTS_DIR}/MapboxMobileEvents/MapboxMobileEvents.framework",
 				"${BUILT_PRODUCTS_DIR}/MapboxNavigation/MapboxNavigation.framework",
+				"${BUILT_PRODUCTS_DIR}/MapboxSpeech/MapboxSpeech.framework",
 				"${BUILT_PRODUCTS_DIR}/Motion/Motion.framework",
 				"${BUILT_PRODUCTS_DIR}/Polyline/Polyline.framework",
-				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/Solar/Solar.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftCheckboxDialog/SwiftCheckboxDialog.framework",
 				"${BUILT_PRODUCTS_DIR}/TTGSnackbar/TTGSnackbar.framework",
@@ -312,8 +313,6 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ARCL.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSPolly.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GeoFire.framework",
@@ -324,9 +323,9 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxDirections.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxMobileEvents.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxNavigation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxSpeech.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Motion.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Polyline.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Solar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftCheckboxDialog.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTGSnackbar.framework",
@@ -352,6 +351,7 @@
 				5B25D748202613280065282B /* ViewController.swift in Sources */,
 				B4A21A6F2073A1AC00731C9E /* GroupRequstTableViewCell.swift in Sources */,
 				B42C3AAC20481EA3005C44D1 /* FriendRequstTableViewCell.swift in Sources */,
+				B4236D17208235AF00C90C00 /* AddZoneViewController.swift in Sources */,
 				B42C3AAE2048440A005C44D1 /* FriendTableViewCell.swift in Sources */,
 				5B14587520318DF000B58BA4 /* FriendsViewController.swift in Sources */,
 				B4A21A732073CD9F00731C9E /* TrackingRequstCell.swift in Sources */,
@@ -500,10 +500,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 32562HD3CC;
+				DEVELOPMENT_TEAM = W7YP9VNEHY;
 				INFOPLIST_FILE = "$(SRCROOT)/WeenkSwift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.etar.Weenk;
+				PRODUCT_BUNDLE_IDENTIFIER = com.etar.Weenk.ar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -516,10 +517,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 32562HD3CC;
+				DEVELOPMENT_TEAM = W7YP9VNEHY;
 				INFOPLIST_FILE = "$(SRCROOT)/WeenkSwift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.etar.Weenk;
+				PRODUCT_BUNDLE_IDENTIFIER = com.etar.Weenk.ar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

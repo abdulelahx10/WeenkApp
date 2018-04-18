@@ -2,81 +2,12 @@ import Foundation
 import CoreLocation
 import MapboxDirections
 
-/**
- Key used for accessing the `RouteProgress` object from a `RouteControllerProgressDidChange` notification's `userInfo` dictionary.
- */
-public let RouteControllerProgressDidChangeNotificationProgressKey = MBRouteControllerProgressDidChangeNotificationProgressKey
 
-/**
- Key used for accessing the `CLLocation` object from a `RouteControllerProgressDidChange` notification's `userInfo` dictionary.
- */
-public let RouteControllerProgressDidChangeNotificationLocationKey = MBRouteControllerProgressDidChangeNotificationLocationKey
-
-/**
- Key used for accessing the number of seconds left on a step (Double) from a `RouteControllerProgressDidChange` notification's `userInfo` dictionary.
- */
-public let RouteControllerProgressDidChangeNotificationSecondsRemainingOnStepKey = MBRouteControllerProgressDidChangeNotificationSecondsRemainingOnStepKey
-
-/**
- Key used for accessing the user's current `CLLocation` from a `RouteControllerWillReroute` notification's `userInfo` dictionary.
- */
-public let RouteControllerNotificationLocationKey = MBRouteControllerNotificationLocationKey
-
-/**
- Key used for accessing the newly rerouted `Route` from a `RouteControllerDidReroute` notification's `userInfo` dictionary.
- */
-public let RouteControllerNotificationRouteKey = MBRouteControllerNotificationRouteKey
-
-/**
- Key used for accessing the error from a `RouteControllerDidFailToReroute` notification's `userInfo` dictionary.
- */
-public let RouteControllerNotificationErrorKey = MBRouteControllerNotificationErrorKey
-
-/**
- Key used for accessing a `Bool` as to whether the reroute occurced because a faster route was found.
- */
-public let RouteControllerDidFindFasterRouteKey = MBRouteControllerDidFindFasterRouteKey
-
-/**
- Key for accessing the `RouteProgress` key emitted when `RouteControllerDidPassSpokenInstructionPoint` is fired.
- */
-public let RouteControllerDidPassSpokenInstructionPointRouteProgressKey = MBRouteControllerDidPassSpokenInstructionPointRouteProgressKey
-
-extension Notification.Name {
-    /**
-     Emitted after the user has gone off-route but the `RouteController` failed to reroute.
-     */
-    public static let routeControllerDidFailToReroute = Notification.Name(MBRouteControllerDidFailToReroute)
-    /**
-     Emitted when the user has gone off-route and the `RouteController` is about to reroute.
-     */
-    public static let routeControllerWillReroute = Notification.Name(MBRouteControllerWillReroute)
-    
-    /**
-     Emitted after the user has gone off-route and the `RouteController` rerouted.
-     */
-    public static let routeControllerDidReroute = Notification.Name(MBRouteControllerDidReroute)
-    
-    /**
-     Emitted when the user moves along the route.
-     */
-    public static let routeControllerProgressDidChange = Notification.Name(MBRouteControllerNotificationProgressDidChange)
-    
-    /**
-     Emitted when the user passes an ideal point for saying an instruction aloud.
-     */
-    public static let routeControllerDidPassSpokenInstructionPoint = Notification.Name(MBRouteControllerDidPassSpokenInstructionPoint)
-}
-
+// MARK: - RouteController
 /**
  Maximum number of meters the user can travel away from step before `RouteControllerShouldReroute` is emitted.
  */
 public var RouteControllerMaximumDistanceBeforeRecalculating: CLLocationDistance = 50
-
-/**
- Accepted deviation excluding horizontal accuracy before the user is considered to be off route.
- */
-public var RouteControllerUserLocationSnappingDistance: CLLocationDistance = 15
 
 /**
  Threshold user must be in within to count as completing a step. One of two heuristics used to know when a user completes a step, see `RouteControllerManeuverZoneRadius`.
@@ -103,12 +34,9 @@ public var RouteControllerManeuverZoneRadius: CLLocationDistance = 40
 /**
  When calculating whether or not the user is on the route, we look where the user will be given their speed and this variable.
  */
-public var RouteControllerDeadReckoningTimeInterval:TimeInterval = 1.0
+public var RouteControllerDeadReckoningTimeInterval: TimeInterval = 1.0
 
-/**
- Maximum angle the user puck will be rotated when snapping the user's course to the route line.
- */
-public var RouteControllerMaxManipulatedCourseAngle:CLLocationDirection = 25
+
 
 /**
  :nodoc This is used internally for debugging metrics
@@ -123,14 +51,9 @@ public var NavigationMetricsDebugLoggingEnabled = "MBNavigationMetricsDebugLoggi
 public let RouteControllerLinkedInstructionBufferMultiplier: Double = 1.2
 
 /**
- Approximately the number of meters in a mile.
- */
-let milesToMeters = 1609.34
-
-/**
  The minimum speed value before the user's actual location can be considered over the snapped location.
  */
-public var RouteControllerMinimumSpeedForLocationSnapping: CLLocationSpeed = 3
+public var RouteSnappingMinimumSpeed: CLLocationSpeed = 3
 
 /**
  The minimum distance threshold used for giving a "Continue" type instructions.
@@ -155,7 +78,7 @@ public var RouteControllerNumberOfSecondsForRerouteFeedback: TimeInterval = 10
 /**
  The number of seconds between attempts to automatically calculate a more optimal route while traveling.
  */
-public var RouteControllerOpportunisticReroutingInterval: TimeInterval = 120
+public var RouteControllerProactiveReroutingInterval: TimeInterval = 120
 
 let FasterRouteFoundEvent = "navigation.fasterRoute"
 
@@ -163,3 +86,29 @@ let FasterRouteFoundEvent = "navigation.fasterRoute"
  The number of seconds remaining on the final step of a leg before the user is considered "arrived".
  */
 public var RouteControllerDurationRemainingWaypointArrival: TimeInterval = 3
+
+//MARK: - Route Snapping (CLLocation)
+/**
+ Accepted deviation excluding horizontal accuracy before the user is considered to be off route.
+ */
+public var RouteControllerUserLocationSnappingDistance: CLLocationDistance = 15
+
+/**
+ Maximum angle the user puck will be rotated when snapping the user's course to the route line.
+ */
+public var RouteSnappingMaxManipulatedCourseAngle: CLLocationDirection = 45
+
+/**
+ Minimum Accuracy (maximum deviation, in meters) that the route snapping engine will accept before it stops snapping.
+ */
+public var RouteSnappingMinimumHorizontalAccuracy: CLLocationAccuracy = 20.0
+
+/**
+ Minimum number of consecutive incorrect course updates before rerouting occurs.
+ */
+public var RouteControllerMinNumberOfInCorrectCourses: Int = 4
+
+/**
+ Given a location update, the `horizontalAccuracy` is used to figure out how many consective location updates to wait before rerouting due to consecutive incorrect course updates.
+ */
+public var RouteControllerIncorrectCourseMultiplier: Int = 4

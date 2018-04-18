@@ -10,10 +10,10 @@ import UIKit
 import Firebase
 import Mapbox
 import ARCL
-import Motion
 import CoreLocation
+import Motion
 
-class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewDelegate , UITableViewDataSource{
+class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewDelegate , UITableViewDataSource ,MGLMapViewDelegate{
    
  
     fileprivate var _refHandle: DatabaseHandle!
@@ -56,19 +56,21 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         
    
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-        
+        mapView.delegate = self
         mapView.logoView.isHidden = true
         mapView.attributionButton.isHidden = true
-        
+        mapView.zoomLevel = 8
+        mapView.setCenter(CLLocationCoordinate2D(latitude: 45, longitude: -122), animated: true)
+
         dropDownBtn.clipsToBounds = true
         dropDownBtn.layer.cornerRadius = 10
      
        
         
-       
+        
     }
     
     func configureAuth() {
@@ -107,6 +109,31 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
             mapView.zoomLevel = 6
         }
         
+    }
+    
+    func mapView(_ mapView: MGLMapView, fillColorForPolygonAnnotation annotation: MGLPolygon) -> UIColor {
+        return UIColor.blue
+    }
+    func mapView(_ mapView: MGLMapView, alphaForShapeAnnotation annotation: MGLShape) -> CGFloat {
+        return 0.5
+    }
+    func mapView(_ mapView: MGLMapView, strokeColorForShapeAnnotation annotation: MGLShape) -> UIColor {
+        return .white
+    }
+    func mapView(_ mapView: MGLMapView, didFinishLoading style: MGLStyle) {
+        let center = CLLocationCoordinate2D(latitude: 45, longitude: -122)
+        let radiusMeters = 5000.0
+        
+        let point = MGLPointAnnotation()
+        point.coordinate = center
+        let source = MGLShapeSource(identifier: "circle", shape: point, options: nil)
+        style.addSource(source)
+        let layer = MGLCircleStyleLayer(identifier: "circle", source: source)
+        let radiusPoints = radiusMeters / mapView.metersPerPoint(atLatitude: center.latitude)
+        layer.circleRadius = MGLStyleValue(rawValue: NSNumber(value: radiusPoints))
+        layer.circleColor = MGLStyleValue(rawValue: UIColor.cyan)
+        layer.circleOpacity = MGLStyleValue(rawValue: 0.5)
+        style.addLayer(layer)
     }
     
     
@@ -186,29 +213,24 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
        
         SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
             
-            if self.nodeWithIDList[self.friendTrackingID] == nil {
-                 self.nodeWithIDList[self.friendTrackingID] = self.makeARmarker(latitude: pos.latitude, longitude: pos.longitude , altitude: pos.altitude)
+            let lat = Double(pos.latitude)
+            let lon = Double(pos.longitude)
+            let alt = Double(pos.altitude)
+            if self.nodeWithIDList[self.friendTrackingID] != nil {
+                self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
             }
-            
+            let newNode = self.makeARmarker(latitude: lat!, longitude: lon!, altitude: alt!)
+            self.nodeWithIDList[self.friendTrackingID] = newNode
+            self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
         })
-        if self.nodeWithIDList[self.friendTrackingID] != nil{
-            arView.addLocationNodeWithConfirmedLocation(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
-             self.nodeWithIDList[self.friendTrackingID] = nil
-        }
     }
     
-    func makeARmarker(latitude:String , longitude:String , altitude:String) -> LocationAnnotationNode {
+    func makeARmarker(latitude:Double , longitude:Double , altitude:Double) -> LocationAnnotationNode {
         
-        var lat = Double(latitude)
-        var lon = Double(longitude)
-        var alt = Double(altitude)
-        var coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
-        var location = CLLocation(coordinate: coordinate, altitude: alt!)
-        var image = UIImage.animatedImage(with: arMarker, duration:0.5)!
-        
-        var annotationNode = LocationAnnotationNode(location: location, image: image)
-        annotationNode.scaleRelativeToDistance = true
-        
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let location = CLLocation(coordinate: coordinate, altitude: altitude + 5)
+        let image = UIImage.animatedImage(with: arMarker, duration:0.5)!
+        let annotationNode = LocationAnnotationNode(location: location, image: image)
         return annotationNode
     }
 

@@ -1,7 +1,7 @@
 #import "MMEEvent.h"
 #import "MMEConstants.h"
 #import "MMECommonEventData.h"
-#import "reachability.h"
+#import "MMEReachability.h"
 
 @implementation MMEEvent
 
@@ -28,6 +28,16 @@
     [commonAttributes addEntriesFromDictionary:attributes];
     locationEvent.attributes = commonAttributes;
     return locationEvent;
+}
+
++ (instancetype)visitEventWithAttributes:(NSDictionary *)attributes {
+    MMEEvent *visitEvent = [[MMEEvent alloc] init];
+    visitEvent.name = MMEEventTypeVisit;
+    NSMutableDictionary *commonAttributes = [NSMutableDictionary dictionary];
+    commonAttributes[MMEEventKeyEvent] = visitEvent.name;
+    [commonAttributes addEntriesFromDictionary:attributes];
+    visitEvent.attributes = commonAttributes;
+    return visitEvent;
 }
 
 + (instancetype)mapLoadEventWithDateString:(NSString *)dateString commonEventData:(MMECommonEventData *)commonEventData; {
@@ -150,6 +160,33 @@
             break;
     }
     return result;
+}
+
+- (BOOL)isEqualToEvent:(MMEEvent *)event {
+    if (!event) {
+        return NO;
+    }
+    
+    BOOL hasEqualName = [self.name isEqualToString:event.name];
+    BOOL hasEqualAttributes = [self.attributes isEqual:event.attributes];
+    
+    return hasEqualName && hasEqualAttributes;
+}
+
+- (BOOL)isEqual:(id)other {
+    if (other == self) {
+        return YES;
+    }
+    
+    if (![other isKindOfClass:[MMEEvent class]]) {
+        return  NO;
+    }
+    
+    return [self isEqualToEvent:other];
+}
+
+- (NSUInteger)hash {
+    return self.name.hash ^ self.attributes.hash;
 }
 
 - (NSString *)description {

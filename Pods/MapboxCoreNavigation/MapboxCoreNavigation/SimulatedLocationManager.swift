@@ -49,7 +49,9 @@ public class SimulatedLocationManager: NavigationLocationManager {
     
     var route: Route? {
         didSet {
+            stopUpdatingLocation()
             reset()
+            startUpdatingLocation()
         }
     }
     
@@ -76,14 +78,11 @@ public class SimulatedLocationManager: NavigationLocationManager {
             
             currentDistance = 0
             currentSpeed = 30
-            DispatchQueue.main.async {
-                self.startUpdatingLocation()
-            }
         }
     }
     
     @objc private func progressDidChange(_ notification: Notification) {
-        routeProgress = notification.userInfo![MBRouteControllerDidPassSpokenInstructionPointRouteProgressKey] as? RouteProgress
+        routeProgress = notification.userInfo![RouteControllerNotificationUserInfoKey.routeProgressKey] as? RouteProgress
     }
     
     @objc private func didReroute(_ notification: Notification) {
@@ -100,11 +99,13 @@ public class SimulatedLocationManager: NavigationLocationManager {
     }
     
     override public func startUpdatingLocation() {
-        tick()
+        DispatchQueue.main.async(execute: tick)
     }
     
     override public func stopUpdatingLocation() {
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(tick), object: nil)
+        DispatchQueue.main.async {
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.tick), object: nil)
+        }
     }
     
     @objc fileprivate func tick() {
@@ -137,13 +138,11 @@ public class SimulatedLocationManager: NavigationLocationManager {
             currentSpeed = distance / time
         }
         // More than 10 nearby coordinates indicates that we are in a roundabout or similar complex shape.
-        else if coordinatesNearby.count >= 10
-        {
+        else if coordinatesNearby.count >= 10 {
             currentSpeed = minimumSpeed
         }
         // Maximum speed if we are a safe distance from the closest coordinate
-        else if distance >= safeDistance
-        {
+        else if distance >= safeDistance {
             currentSpeed = maximumSpeed
         }
         // Base speed on previous or upcoming turn penalty
@@ -183,7 +182,7 @@ extension CLLocation {
 extension Array where Element : Hashable {
     fileprivate struct OptionalSubscript {
         var elements: [Element]
-        subscript (index: Int)  -> Element? {
+        subscript (index: Int) -> Element? {
             return index < elements.count ? elements[index] : nil
         }
     }
@@ -211,7 +210,7 @@ extension Array where Element == CLLocationCoordinate2D {
         for (coordinate, nextCoordinate) in zip(prefix(upTo: endIndex - 1), suffix(from: 1)) {
             let currentCoordinate = locations.isEmpty ? first! : coordinate
             let course = coordinate.direction(to: nextCoordinate).wrap(min: 0, max: 360)
-            let turnPenalty = currentCoordinate.direction(to: coordinate).differenceBetween(coordinate.direction(to: nextCoordinate))
+            let turnPenalty = currentCoordinate.direction(to: coordinate).difference(from: coordinate.direction(to: nextCoordinate))
             let location = SimulatedLocation(coordinate: coordinate,
                                              altitude: 0,
                                              horizontalAccuracy: horizontalAccuracy,

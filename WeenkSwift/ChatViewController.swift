@@ -21,7 +21,7 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
     @IBOutlet weak var messageTableView: UITableView!
     
     var friendChatWith: UserData?
-    var chatWithGroup: GroupData?
+    var chatWithGroup: GroupData!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -40,9 +40,6 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
                 self.messageTableView.reloadData()
             }
         }
-        SocialSystem.system.addAcceptedTrackingUserObserver {
-            self.messageTableView.reloadData()
-        }
         configureTableView()
     }
     
@@ -53,7 +50,8 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
     }
     
     func rejectTracking(_ sender: TrackingRequstCell) {
-        ///////////////////
+        SocialSystem.system.rejectTrackRequest(FromUserID: (friendChatWith?.id)!)
+        print("rejected")
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,23 +63,32 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
         SocialSystem.system.removeMessageObserver()
     }
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SocialSystem.system.messagesList.count + 1
+        switch (section) {
+        case 0:
+            return SocialSystem.system.messagesList.count
+        case 1:
+            return 1
+        default:
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if indexPath.row < SocialSystem.system.messagesList.count - 1{
-            
+
+        switch (indexPath.section) {
+        case 0:
             let massage = tableView.dequeueReusableCell(withIdentifier: "massageCell") as? MassageTableViewCell
-            
             massage?.clipsToBounds = true
             massage?.layer.cornerRadius = 10
-            
             massage?.senderName.text = SocialSystem.system.messagesList[indexPath.row].sender
             massage?.massageText.text = SocialSystem.system.messagesList[indexPath.row].message
-            
-            let myUserData : UserData
             
             if SocialSystem.system.messagesList[indexPath.row].senderID != SocialSystem.system.CURRENT_USER_ID {
                 return massage!
@@ -90,16 +97,16 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
                 massage?.massageText.textColor = UIColor.black
             }
             return massage!
-        }else {
-            
-            let trackingRequst = tableView.dequeueReusableCell(withIdentifier: "TrackingRequstCell") as? TrackingRequstCell
-            trackingRequst?.clipsToBounds = true
-            trackingRequst?.layer.cornerRadius = 10
-            trackingRequst?.requstLabel.text = "\(friendChatWith?.name) wants to track you"
-            
-            return trackingRequst!
+        case 1:
+            if (false) {
+                let trackingRequst = tableView.dequeueReusableCell(withIdentifier: "TrackingRequstCell") as? TrackingRequstCell
+                return trackingRequst!
+            }else{
+                return UITableViewCell()
+            }
+        default:
+             return UITableViewCell()
         }
-        
     }
     
     
@@ -112,7 +119,12 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
     @IBOutlet weak var userChatName: UILabel!
     @IBAction func SendMassage(_ sender: UIButton) {
         
-        SocialSystem.system.sendMessage(ToChatID: (friendChatWith?.fChatId)!, WithTheMessage: massageTextField.text!)
+        if friendChatWith != nil{
+            SocialSystem.system.sendMessage(ToChatID: (friendChatWith?.fChatId)!, WithTheMessage: massageTextField.text!)
+        }else if chatWithGroup != nil {
+            SocialSystem.system.sendMessage(ToChatID: (chatWithGroup?.chatId)!, WithTheMessage: massageTextField.text!)
+        }
+        
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

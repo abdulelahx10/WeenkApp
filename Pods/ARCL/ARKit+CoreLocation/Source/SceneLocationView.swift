@@ -338,6 +338,15 @@ public class SceneLocationView: ARSCNView, ARSCNViewDelegate {
         locationDelegate?.sceneLocationViewDidConfirmLocationOfNode(sceneLocationView: self, node: locationNode)
     }
     
+   public func updatelocationForlocationNode(latitude:Double , longitude:Double , altitude:Double , locationNode:LocationAnnotationNode){
+    
+        if let index = locationNodes.index(of: locationNode) {
+            let Coordinate = CLLocationCoordinate2D(latitude: longitude, longitude: longitude)
+            let newLocation = CLLocation(coordinate: Coordinate, altitude: altitude)
+            locationNodes[index].location.translation(toLocation: newLocation)
+        }
+    }
+    
     func updatePositionAndScaleOfLocationNodes() {
         for locationNode in locationNodes {
             if locationNode.continuallyUpdatePositionAndScale {

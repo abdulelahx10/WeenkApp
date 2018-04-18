@@ -124,7 +124,7 @@ class SocialSystem {
         let group = ["groupName": groupName,
                      "admin": CURRENT_USER_ID,
                      "chatId": ref.key]
-        ref.child(ref.key).setValue(group)
+        ref.setValue(group)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
         return ref.key
@@ -147,7 +147,7 @@ class SocialSystem {
     }
     
     /** Sends a group request with given groupID to the user with the specified id */
-    func sendGroupRequest(ToUserID userID: String, ForUserID groupID: String, isChild: Bool) {
+    func sendGroupRequest(ToUserID userID: String, ForGroupID groupID: String, isChild: Bool) {
         // get the current date and time
         let currentDateTime = Date()
         

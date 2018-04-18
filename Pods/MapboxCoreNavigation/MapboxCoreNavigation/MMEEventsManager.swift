@@ -4,7 +4,7 @@ import AVFoundation
 import MapboxMobileEvents
 
 let SecondsBeforeCollectionAfterFeedbackEvent: TimeInterval = 20
-let EventVersion = 6
+let EventVersion = 8
 
 struct EventDetails {
     var originalRequestIdentifier: String?
@@ -17,7 +17,6 @@ struct EventDetails {
     var geometry: Polyline?
     var distance: CLLocationDistance?
     var estimatedDuration: TimeInterval?
-    var stepCount: Int?
     var created: Date
     var startTimestamp: Date?
     var sdkIdentifier: String
@@ -39,6 +38,13 @@ struct EventDetails {
     var locationEngine: CLLocationManager.Type?
     var percentTimeInPortrait: Int
     var percentTimeInForeground: Int
+    var locationManagerDesiredAccuracy: CLLocationAccuracy?
+    
+    var stepIndex: Int
+    var stepCount: Int
+    var legIndex: Int
+    var legCount: Int
+    var totalStepCount: Int
     
     init(routeController: RouteController, session: SessionState) {
         created = Date()
@@ -74,7 +80,6 @@ struct EventDetails {
             self.geometry = Polyline(coordinates: geometry)
             distance = round(session.currentRoute.distance)
             estimatedDuration = round(session.currentRoute.expectedTravelTime)
-            stepCount = session.currentRoute.legs.map({$0.steps.count}).reduce(0, +)
         }
         
         distanceCompleted = round(session.totalDistanceCompleted + routeController.routeProgress.distanceTraveled)
@@ -92,6 +97,7 @@ struct EventDetails {
         applicationState = UIApplication.shared.applicationState
         if let manager = routeController.locationManager {
             locationEngine = type(of: manager)
+            locationManagerDesiredAccuracy = manager.desiredAccuracy
         }
         
         var totalTimeInPortrait = session.timeSpentInPortrait
@@ -111,6 +117,12 @@ struct EventDetails {
             totalTimeInBackground += abs(session.lastTimeInBackground.timeIntervalSinceNow)
         }
         percentTimeInForeground = totalTimeInPortrait + totalTimeInLandscape == 0 ? 100 : Int((totalTimeInPortrait / (totalTimeInPortrait + totalTimeInLandscape) * 100))
+        
+        stepIndex = routeController.routeProgress.currentLegProgress.stepIndex
+        stepCount = routeController.routeProgress.currentLeg.steps.count
+        legIndex = routeController.routeProgress.legIndex
+        legCount = routeController.routeProgress.route.legs.count
+        totalStepCount = routeController.routeProgress.route.legs.map { $0.steps.count }.reduce(0, +)
     }
     
     var eventDictionary: [String: Any] {
@@ -149,7 +161,6 @@ struct EventDetails {
         modifiedEventDictionary["geometry"] = geometry?.encodedPolyline
         modifiedEventDictionary["estimatedDistance"] = distance
         modifiedEventDictionary["estimatedDuration"] = estimatedDuration
-        modifiedEventDictionary["stepCount"] = stepCount
 
         modifiedEventDictionary["distanceCompleted"] = distanceCompleted
         modifiedEventDictionary["distanceRemaining"] = distanceRemaining
@@ -167,10 +178,17 @@ struct EventDetails {
         modifiedEventDictionary["absoluteDistanceToDestination"] = userAbsoluteDistanceToDestination
         if let locationEngine = locationEngine {
             modifiedEventDictionary["locationEngine"] = String(describing: locationEngine)
+            modifiedEventDictionary["locationManagerDesiredAccuracy"] = locationManagerDesiredAccuracy
         }
         
         modifiedEventDictionary["percentTimeInPortrait"] = percentTimeInPortrait
         modifiedEventDictionary["percentTimeInForeground"] = percentTimeInForeground
+        
+        modifiedEventDictionary["stepIndex"] = stepIndex
+        modifiedEventDictionary["stepCount"] = stepCount
+        modifiedEventDictionary["legIndex"] = legIndex
+        modifiedEventDictionary["legCount"] = legCount
+        modifiedEventDictionary["totalStepCount"] = totalStepCount
 
         return modifiedEventDictionary
     }
@@ -283,7 +301,7 @@ extension AVAudioSession {
         return "unknown"
     }
     
-    func isOutputBluetooth() -> Bool{
+    func isOutputBluetooth() -> Bool {
         for output in currentRoute.outputs {
             if [AVAudioSessionPortBluetoothA2DP, AVAudioSessionPortBluetoothLE].contains(output.portType) {
                 return true
@@ -292,7 +310,7 @@ extension AVAudioSession {
         return false
     }
     
-    func isOutputHeadphones() -> Bool{
+    func isOutputHeadphones() -> Bool {
         for output in currentRoute.outputs {
             if [AVAudioSessionPortHeadphones, AVAudioSessionPortAirPlay, AVAudioSessionPortHDMI, AVAudioSessionPortLineOut].contains(output.portType) {
                 return true
@@ -301,7 +319,7 @@ extension AVAudioSession {
         return false
     }
     
-    func isOutputSpeaker() -> Bool{
+    func isOutputSpeaker() -> Bool {
         for output in currentRoute.outputs {
             if [AVAudioSessionPortBuiltInSpeaker, AVAudioSessionPortBuiltInReceiver].contains(output.portType) {
                 return true
@@ -342,7 +360,7 @@ extension RouteLegProgress {
                 "distance": Int(currentStep.distance),
                 "duration": Int(currentStep.expectedTravelTime),
                 "distanceRemaining": Int(currentStepProgress.distanceRemaining),
-                "durationRemaining": Int(currentStepProgress.durationRemaining),
+                "durationRemaining": Int(currentStepProgress.durationRemaining)
             ]
         }
     }
@@ -410,4 +428,3 @@ class RerouteEvent: CoreFeedbackEvent {
         }
     }
 }
-

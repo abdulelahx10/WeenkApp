@@ -10,6 +10,7 @@ import UIKit
 
 class GroupRequstTableViewCell: UITableViewCell {
 
+    
     @IBOutlet weak var groupName: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()

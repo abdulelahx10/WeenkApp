@@ -10,75 +10,18 @@ import UIKit
 import TTGSnackbar
 import SwiftCheckboxDialog
 
-class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate,GroupRequstTableViewCellDelegate , CheckboxDialogViewDelegate{
+class FriendsViewController: UIViewController , UITableViewDelegate , UITableViewDataSource, FriendRequstTableViewCellDelegate , FriendTableViewCellDelegate,GroupRequstTableViewCellDelegate{
     
-    
-    func onCheckboxPickerValueChange(_ component: DialogCheckboxViewEnum, values: TranslationDictionary) {
-        ///
-    }
-    
-    
-    
-    var childModelShowed : Bool = false
-    
-    func onCheckboxPickerValueChange(_ component: DialogCheckboxViewEnum, values: TranslationDictionary, textFieldValue: String) {
-      
-        let newGroupID = SocialSystem.system.createGroup(WithGroupName: textFieldValue)
-        
-        for (id,name) in values {
-            
-            var isChild : Bool = false
-            let alert = UIAlertController(title: "child", message: "is \(name) a child", preferredStyle: .alert)
-            let yesAction = UIAlertAction(title: "yes", style: .default, handler: { (action) in
-                isChild = true
-            })
-            let noAction = UIAlertAction(title: "no", style: .cancel, handler: { (action) in
-                isChild = false
-            })
-            
-            alert.addAction(yesAction)
-            alert.addAction(noAction)
-            self.present(alert, animated: true)
-            
-            SocialSystem.system.sendGroupRequest(ToUserID: id, userID: newGroupID, isChild: isChild)
-        }
-       
-    }
-    
-    
-    
-    
-    var checkBoxDialog : CheckboxDialogViewController!
-    
+
+
     @IBOutlet weak var tableView: UITableView!
     
     @IBAction func NewGroup(_ sender: Any) {
         
-        let tableData = makeFriendListDialog()
-        
-        self.checkBoxDialog = CheckboxDialogViewController()
-        self.checkBoxDialog.tableData = tableData
-        self.checkBoxDialog.titleDialog = "Group Name"
-        self.checkBoxDialog.componentName = DialogCheckboxViewEnum.countries
-        self.checkBoxDialog.delegateDialogTableView = self
-        self.checkBoxDialog.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-        self.present(self.checkBoxDialog , animated: true , completion: nil)
-        childModelShowed = false
+
         
     }
     
-   
-    
-    
-    func makeFriendListDialog() -> [(name: String , translated: String)] {
-        
-        var list : [(name: String , translated: String)] = []
-        for friend in SocialSystem.system.friendList {
-            list.append((name: friend.id, translated: friend.name))
-        }
-        
-        return list
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -127,7 +70,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return 100
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -136,17 +79,13 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         case 0:
             return SocialSystem.system.friendList.count
          
-            
         case 1:
             return SocialSystem.system.userGroupdList.count
          
-        
         case 2:
             return SocialSystem.system.friendRequestList.count
-            
         case 3:
             return SocialSystem.system.groupRequestList.count
-      
         default:
            return -1
         }
@@ -167,9 +106,8 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             }
             cell?.userName.text = SocialSystem.system.friendList[indexPath.row].name
             cell?.delegate = self
-            let friendID = SocialSystem.system.friendList[indexPath.row].id
-            if SocialSystem.system.AcceptedTrackingUserIDList.contains(friendID!) {
-                ////
+            if SocialSystem.system.friendList[indexPath.row].fIsTrackRequested {
+                cell?.trackBtn.isEnabled = false
             }
             return cell!
         
@@ -265,22 +203,23 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectendIndex = indexPath.row
-        
+    
         if indexPath.section == 0{
             performSegue(withIdentifier: "chatWithFriend", sender: self)
         }else if indexPath.section == 1 {
-             performSegue(withIdentifier: "chatWithGroup", sender: self)
+             performSegue(withIdentifier: "chatWithFriend", sender: self)
         }
-        
-    
-       
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? ChatViewController{
-            
-            destination.friendChatWith = SocialSystem.system.friendList[tableView.indexPathForSelectedRow!.row]
+            if tableView.indexPathForSelectedRow?.section == 0 {
+                destination.friendChatWith = SocialSystem.system.friendList[tableView.indexPathForSelectedRow!.row]
+                destination.chatWithGroup = nil
+            }else if tableView.indexPathForSelectedRow?.section == 1 {
+                destination.chatWithGroup = SocialSystem.system.userGroupdList[tableView.indexPathForSelectedRow!.row]
+                destination.friendChatWith = nil
+            }
         }
     }
     

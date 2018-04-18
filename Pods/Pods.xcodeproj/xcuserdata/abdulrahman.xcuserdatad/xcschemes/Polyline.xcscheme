@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6258E121F201DB380840932EF2031FF8"
+               BlueprintIdentifier = "BEA88AD8CEB453E019BF383C66BD2109"
                BlueprintName = "Polyline"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "Polyline.framework">
