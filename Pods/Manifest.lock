@@ -1,42 +1,39 @@
 PODS:
   - ARCL (1.0.2)
-  - AWSCore (2.6.11)
-  - AWSPolly (2.6.11):
-    - AWSCore (= 2.6.11)
-  - Firebase/Auth (4.8.2):
+  - Firebase/Auth (4.12.0):
     - Firebase/Core
-    - FirebaseAuth (= 4.4.2)
-  - Firebase/Core (4.8.2):
-    - FirebaseAnalytics (= 4.0.9)
-    - FirebaseCore (= 4.0.14)
-  - Firebase/Database (4.8.2):
+    - FirebaseAuth (= 4.6.0)
+  - Firebase/Core (4.12.0):
+    - FirebaseAnalytics (= 4.1.0)
+    - FirebaseCore (= 4.0.19)
+  - Firebase/Database (4.12.0):
     - Firebase/Core
-    - FirebaseDatabase (= 4.1.4)
-  - FirebaseAnalytics (4.0.9):
+    - FirebaseDatabase (= 4.1.5)
+  - FirebaseAnalytics (4.1.0):
     - FirebaseCore (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
     - nanopb (~> 0.3)
-  - FirebaseAuth (4.4.2):
-    - FirebaseAnalytics (~> 4.0)
+  - FirebaseAuth (4.6.0):
+    - FirebaseAnalytics (~> 4.1)
     - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (4.0.14):
+  - FirebaseCore (4.0.19):
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-  - FirebaseDatabase (4.1.4):
-    - FirebaseAnalytics (~> 4.0)
+  - FirebaseDatabase (4.1.5):
+    - FirebaseAnalytics (~> 4.1)
     - FirebaseCore (~> 4.0)
     - leveldb-library (~> 1.18)
-  - FirebaseInstanceID (2.0.8):
+  - FirebaseInstanceID (2.0.10):
     - FirebaseCore (~> 4.0)
-  - FirebaseUI/Auth (4.5.1):
+  - FirebaseUI/Auth (4.5.5):
     - Firebase/Auth (~> 4.2)
-  - FirebaseUI/Database (4.5.1):
+  - FirebaseUI/Database (4.5.5):
     - Firebase/Database (~> 4.0)
-  - FirebaseUI/Google (4.5.1):
+  - FirebaseUI/Google (4.5.5):
     - FirebaseUI/Auth
     - GoogleSignIn (~> 4.0)
-  - FirebaseUI/Twitter (4.5.1):
+  - FirebaseUI/Twitter (4.5.5):
     - FirebaseUI/Auth
     - TwitterKit (~> 3.0)
   - GeoFire (2.0.1):
@@ -58,27 +55,26 @@ PODS:
   - GoogleToolboxForMac/NSString+URLArguments (2.1.3)
   - GTMOAuth2 (1.1.6):
     - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.1.13):
-    - GTMSessionFetcher/Full (= 1.1.13)
-  - GTMSessionFetcher/Core (1.1.13)
-  - GTMSessionFetcher/Full (1.1.13):
-    - GTMSessionFetcher/Core (= 1.1.13)
+  - GTMSessionFetcher (1.1.15):
+    - GTMSessionFetcher/Full (= 1.1.15)
+  - GTMSessionFetcher/Core (1.1.15)
+  - GTMSessionFetcher/Full (1.1.15):
+    - GTMSessionFetcher/Core (= 1.1.15)
   - leveldb-library (1.20)
-  - Mapbox-iOS-SDK (3.7.3)
-  - MapboxCoreNavigation (0.13.0):
-    - MapboxDirections.swift (~> 0.16.0)
-    - MapboxMobileEvents (~> 0.2)
-    - Turf (~> 0.0.4)
-  - MapboxDirections.swift (0.16.0):
+  - Mapbox-iOS-SDK (3.7.6)
+  - MapboxCoreNavigation (0.16.1):
+    - MapboxDirections.swift (~> 0.19.1)
+    - MapboxMobileEvents (~> 0.4)
+    - Turf (~> 0.1)
+  - MapboxDirections.swift (0.19.1):
     - Polyline (~> 4.2)
-  - MapboxMobileEvents (0.2.10)
-  - MapboxNavigation (0.13.0):
-    - AWSPolly (~> 2.6)
+  - MapboxMobileEvents (0.4.0)
+  - MapboxNavigation (0.16.1):
     - Mapbox-iOS-SDK (~> 3.6)
-    - MapboxCoreNavigation (= 0.13.0)
-    - SDWebImage (~> 4.1)
+    - MapboxCoreNavigation (= 0.16.1)
+    - MapboxSpeech (~> 0.0.1)
     - Solar (~> 2.1)
-    - Turf (~> 0.0.4)
+  - MapboxSpeech (0.0.1)
   - Motion (1.3.5):
     - Motion/Core (= 1.3.5)
   - Motion/Core (1.3.5)
@@ -88,13 +84,10 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - Polyline (4.2.0)
-  - SDWebImage (4.3.0):
-    - SDWebImage/Core (= 4.3.0)
-  - SDWebImage/Core (4.3.0)
   - Solar (2.1.0)
   - SwiftCheckboxDialog (1.0.0)
-  - TTGSnackbar (1.7.1)
-  - Turf (0.0.4)
+  - TTGSnackbar (1.7.2)
+  - Turf (0.1.1)
   - TwitterCore (3.1.0)
   - TwitterKit (3.3.0):
     - TwitterCore (>= 3.1.0)
@@ -118,37 +111,35 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   ARCL: 88300cadfbdd6a9288ca17ad18d3ac972d6cb1e6
-  AWSCore: a461695bf302a32a366768bf36056be3a2c87d8d
-  AWSPolly: fa1600710f3eb20624caeb1d0566d77a44ae4902
-  Firebase: 7d3b8cd837ad9fcd391657734c0d56dab8e9a5a3
-  FirebaseAnalytics: 388b630c15713f5dbf364071f5f3d6077fb52f4e
-  FirebaseAuth: bd2738c5c1e92b108ba5f7f7335908097a4e50bb
-  FirebaseCore: 2e0b98fb2d64ca8140136beff15772bdd14d2dd7
-  FirebaseDatabase: de4446507ccd3257fca37d16f40e1540324571fd
-  FirebaseInstanceID: 81df5805a08001e69138664bdd02c6719a9ac80f
-  FirebaseUI: 1dc9c8a87a776b488a28a28541f029e60c824cfd
+  Firebase: d7fdf40e4d6c841849c52919f437fd3a0009ded0
+  FirebaseAnalytics: 3dfae28d4a5e06f86c4fae830efc2ad3fadb19bc
+  FirebaseAuth: 85a1b118a89838efc6f6ab3f2b1f94747d72a915
+  FirebaseCore: ff49ebb37e0f63a570d78c4f1c1c0befe8659d5c
+  FirebaseDatabase: 5f0bc6134c5c237cf55f9e1249d406770a75eafd
+  FirebaseInstanceID: 8d20d890d65c917f9f7d9950b6e10a760ad34321
+  FirebaseUI: 7f149d40db1a67c459df16540256b66d8f8e8c70
   GeoFire: 3e70a24019dc16816190f533c9cac0d1321c4a71
   GoogleSignIn: d9ef55b10f0aa401a5de2747f59b725e4b9732ac
   GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
   GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
-  GTMSessionFetcher: 5bb1eae636127de695590f50e7d248483eb891e6
+  GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
-  Mapbox-iOS-SDK: 5304bd9605babe6da9050ea4cb23c1671420b737
-  MapboxCoreNavigation: 3c964ad1854179dc619b4cceb5f85f428b68fe14
-  MapboxDirections.swift: 168cc83745b188d792c5482bfb0653c233d1455c
-  MapboxMobileEvents: 9e48b59d0eed04508595dcb04a77b7632e1c3054
-  MapboxNavigation: 81502953735c3860cefa8fa645c5870825bed158
+  Mapbox-iOS-SDK: 23ececda1d90c3b436b45e2c88e9677f025303c0
+  MapboxCoreNavigation: 516b2114b3a7d6f09ad9175915718cd6fea0c955
+  MapboxDirections.swift: 3d902e3dc35f14cc6a322785e07f2ee6197237dc
+  MapboxMobileEvents: e71cf788a95fa0c01ad6ce17fd5efd13140af5ff
+  MapboxNavigation: 58f06a66998639cc978d515f8adbc5da5f7d51ef
+  MapboxSpeech: 6cc9b3d53adc2988af3ebc704dd17907b84a3f9f
   Motion: 9f74d115d7f72bb5380a8e3cde2f8a1fc898ac36
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Polyline: 3d69f75bb136357e27291d439d0436c6ebda57a4
-  SDWebImage: 6da6c8bca115addc4de8613362e1b15f66333825
   Solar: 2dc6e7cc39186cb0c8228fa08df76fb50c7d8f24
   SwiftCheckboxDialog: 961526e6a278298b2c7857cd4a5a1e7f034ddb6b
-  TTGSnackbar: 26e9c1f842269d0eeae8c51f7d8cbea669d492f1
-  Turf: 6c169618fa671e3f8a7b764b5b3332053ad6110e
+  TTGSnackbar: e23b4f1e9e9f271b22ce75dfd39c6384edff96c9
+  Turf: 4ace207379c8d58a8e45842755de821dac3fae72
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: ca5278404a6688f274ca2af3bd0398e78a7664ae
+PODFILE CHECKSUM: bd598b4c1044e3da95e4cf7d5bea691b14ccc72c
 
 COCOAPODS: 1.4.0
