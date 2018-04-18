@@ -140,7 +140,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
        
         let location = locations[locations.count - 1];
         if location.horizontalAccuracy > 0 {
-            SocialSystem.system.updatePosition(lat: "\(location.coordinate.latitude)", long: "\(location.coordinate.longitude)", alti: "\(location.altitude)")
+            SocialSystem.system.updatePosition(lat: location.coordinate.latitude, long: location.coordinate.longitude, alti: location.altitude)
             print(location.altitude)
         }
     }
@@ -148,7 +148,6 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
     }
-    
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -190,7 +189,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
                 self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
             }
             
-            var newNode = self.makeARmarker(latitude: pos.latitude, longitude: pos.longitude , altitude: pos.altitude)
+            var newNode = self.makeARmarker(latitude: String(pos.latitude), longitude: String(pos.longitude) , altitude: String(pos.altitude))
             
             self.nodeWithIDList[self.friendTrackingID] = newNode
             self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
@@ -218,6 +217,9 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func EnableLocation(_ sender: Any) {
+        locationManager.requestWhenInUseAuthorization()
+    }
     @IBAction func SignOut(_ sender: Any) {
         do {
             try Auth.auth().signOut()
