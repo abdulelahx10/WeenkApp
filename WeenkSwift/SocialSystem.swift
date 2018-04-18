@@ -28,7 +28,7 @@ class SocialSystem {
     
     /** The GeoFire object */
     var GEOFIRE_OBJ: GeoFire {
-        return GeoFire(firebaseRef: LOCATIONS_REF)
+        return GeoFire(firebaseRef: Database.database().reference().child("GeoFireLocations"))
     }
     
     /** The Firebase reference to the current user's friend tree */
@@ -303,7 +303,9 @@ class SocialSystem {
         // get the date time String from the date object
         let date = formatter.string(from: currentDateTime)
         
-        let pos = ["altitude": altitude,
+        let pos = ["latitude": latitude,
+                   "longitude": longitude,
+                   "altitude": altitude,
                    "lastUpdatedDate": date] as [String : Any]
         
         GEOFIRE_OBJ.setLocation(CLLocation(latitude: latitude, longitude: longitude), forKey: CURRENT_USER_ID)
@@ -314,8 +316,8 @@ class SocialSystem {
     /** get postition from the database */
     func getUserPositionObserver(ForUserID userID: String, completion: @escaping (PositionData) -> Void) {
         LOCATIONS_REF.child(userID).observe(DataEventType.value, with: { (snapshot) in
-            let lat = snapshot.childSnapshot(forPath: "l").childSnapshot(forPath: "0").value as! Double
-            let long = snapshot.childSnapshot(forPath: "l").childSnapshot(forPath: "1").value as! Double
+            let lat = snapshot.childSnapshot(forPath: "latitude").value as! Double
+            let long = snapshot.childSnapshot(forPath: "longitude").value as! Double
             let alti = snapshot.childSnapshot(forPath: "altitude").value as! Double
             let date = snapshot.childSnapshot(forPath: "lastUpdatedDate").value as! String
             completion(PositionData(latitude: lat, longitude: long, altitude: alti,  date: date))

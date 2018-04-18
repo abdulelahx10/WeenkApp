@@ -88,15 +88,6 @@
                                 <rect key="frame" x="0.0" y="605" width="375" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nB3-ge-oRJ">
-                                        <rect key="frame" x="229" y="5" width="146" height="47"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
-                                        <state key="normal" title="GO to Friends"/>
-                                        <connections>
-                                            <segue destination="Pea-nJ-nSL" kind="presentation" identifier="friends" id="r5w-eh-gPP"/>
-                                        </connections>
-                                    </button>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="pMt-t0-I9S">
                                         <rect key="frame" x="163" y="15" width="49" height="31"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -104,6 +95,23 @@
                                             <action selector="toAR:" destination="BYZ-38-t0r" eventType="valueChanged" id="bCe-Si-vPo"/>
                                         </connections>
                                     </switch>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5lo-eD-6ZM">
+                                        <rect key="frame" x="249" y="-13" width="107" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="ask location perm"/>
+                                        <connections>
+                                            <action selector="EnableLocation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vBY-EM-mUX"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nB3-ge-oRJ">
+                                        <rect key="frame" x="229" y="15" width="146" height="47"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                        <state key="normal" title="GO to Friends"/>
+                                        <connections>
+                                            <segue destination="Pea-nJ-nSL" kind="presentation" identifier="friends" id="r5w-eh-gPP"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </view>
                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Welocme:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GHW-hK-Xtz">

@@ -150,7 +150,6 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     }
     
     
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return SocialSystem.system.friendList.count
     }
@@ -218,6 +217,9 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func EnableLocation(_ sender: Any) {
+        locationManager.requestWhenInUseAuthorization()
+    }
     @IBAction func SignOut(_ sender: Any) {
         do {
             try Auth.auth().signOut()
