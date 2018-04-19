@@ -33,19 +33,35 @@ class UserData {
     }
     
 }
+
 // position class
 class PositionData {
     
-    var latitude: String!
-    var longitude: String!
-    var altitude: String!
+    var latitude: Double!
+    var longitude: Double!
+    var altitude: Double!
     var lastUpdatedDate: String!
     
-    init(latitude: String, longitude: String, altitude: String, date: String) {
+    init(latitude: Double, longitude: Double, altitude: Double, date: String) {
         self.latitude = latitude
         self.longitude = longitude
         self.altitude = altitude
         self.lastUpdatedDate = date
+    }
+    
+}
+
+// zone class
+class ZoneData {
+    
+    var latitude: Double!
+    var longitude: Double!
+    var radius: Double!
+    
+    init(latitude: Double, longitude: Double, radius: Double) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.radius = radius
     }
     
 }

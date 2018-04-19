@@ -8,7 +8,9 @@
 
 import UIKit
 
-class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDataSource , UITextFieldDelegate{
+class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDataSource , UITextFieldDelegate , TrackingRequstCellDelegate{
+   
+    
    
  
     
@@ -19,22 +21,39 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
     @IBOutlet weak var messageTableView: UITableView!
     
     var friendChatWith: UserData?
-    
+    var chatWithGroup: GroupData?
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        userChatName.text = friendChatWith?.name
-        
         messageTableView.delegate = self
         messageTableView.dataSource = self
-        
         massageTextField.delegate = self
         
-        SocialSystem.system.addMessageObserver(FromChatID:(friendChatWith?.fChatId)!) {
+        if friendChatWith != nil {
+            userChatName.text = friendChatWith?.name
+            SocialSystem.system.addMessageObserver(FromChatID:(friendChatWith?.fChatId)!) {
+                self.messageTableView.reloadData()
+            }
+        }else if chatWithGroup != nil {
+            userChatName.text = chatWithGroup?.groupName
+            SocialSystem.system.addMessageObserver(FromChatID:(chatWithGroup?.chatId)!) {
+                self.messageTableView.reloadData()
+            }
+        }
+        SocialSystem.system.addAcceptedTrackingUserObserver {
             self.messageTableView.reloadData()
         }
-        
         configureTableView()
+    }
+    
+    func acceptTracking(_ sender: TrackingRequstCell) {
+        guard let tappedIndexPath = messageTableView.indexPath(for: sender) else { return}
+        SocialSystem.system.acceptTrackRequest(FromUserID:(friendChatWith?.id)!)
+        print("accpted")
+    }
+    
+    func rejectTracking(_ sender: TrackingRequstCell) {
+        ///////////////////
     }
 
     override func didReceiveMemoryWarning() {
@@ -47,26 +66,40 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SocialSystem.system.messagesList.count
+        return SocialSystem.system.messagesList.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let massage = tableView.dequeueReusableCell(withIdentifier: "massageCell") as? MassageTableViewCell
-        
-        massage?.clipsToBounds = true
-        massage?.layer.cornerRadius = 10
-        
-        massage?.senderName.text = SocialSystem.system.messagesList[indexPath.row].sender
-        massage?.massageText.text = SocialSystem.system.messagesList[indexPath.row].message
-        
-        if SocialSystem.system.messagesList[indexPath.row].sender == friendChatWith?.name{
+        if indexPath.row < SocialSystem.system.messagesList.count - 1{
+            
+            let massage = tableView.dequeueReusableCell(withIdentifier: "massageCell") as? MassageTableViewCell
+            
+            massage?.clipsToBounds = true
+            massage?.layer.cornerRadius = 10
+            
+            massage?.senderName.text = SocialSystem.system.messagesList[indexPath.row].sender
+            massage?.massageText.text = SocialSystem.system.messagesList[indexPath.row].message
+            
+            let myUserData : UserData
+            
+            if SocialSystem.system.messagesList[indexPath.row].sender != SocialSystem.system.CURRENT_USER_ID {
+                return massage!
+            }else{
+                massage?.backgoundMassage.backgroundColor = UIColor.gray
+                massage?.massageText.textColor = UIColor.black
+            }
             return massage!
-        }else{
-            massage?.backgoundMassage.backgroundColor = UIColor.gray
-            massage?.massageText.textColor = UIColor.black
+        }else {
+            
+            let trackingRequst = tableView.dequeueReusableCell(withIdentifier: "TrackingRequstCell") as? TrackingRequstCell
+            trackingRequst?.clipsToBounds = true
+            trackingRequst?.layer.cornerRadius = 10
+            trackingRequst?.requstLabel.text = "\(friendChatWith?.name) wants to track you"
+            
+            return trackingRequst!
         }
-        return massage!
+        
     }
     
     

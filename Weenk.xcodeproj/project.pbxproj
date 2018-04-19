@@ -29,6 +29,8 @@
 		B43048A420653D2600AD0E33 /* FriendAddToGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43048A320653D2600AD0E33 /* FriendAddToGroupCell.swift */; };
 		B49BE5E620519B820040440B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BE5E520519B810040440B /* ChatViewController.swift */; };
 		B49BE5E82051AF140040440B /* MassageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BE5E72051AF140040440B /* MassageTableViewCell.swift */; };
+		B4A21A6F2073A1AC00731C9E /* GroupRequstTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A21A6E2073A1AC00731C9E /* GroupRequstTableViewCell.swift */; };
+		B4A21A732073CD9F00731C9E /* TrackingRequstCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A21A722073CD9F00731C9E /* TrackingRequstCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,8 @@
 		B43048A320653D2600AD0E33 /* FriendAddToGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendAddToGroupCell.swift; sourceTree = "<group>"; };
 		B49BE5E520519B810040440B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		B49BE5E72051AF140040440B /* MassageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MassageTableViewCell.swift; sourceTree = "<group>"; };
+		B4A21A6E2073A1AC00731C9E /* GroupRequstTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupRequstTableViewCell.swift; sourceTree = "<group>"; };
+		B4A21A722073CD9F00731C9E /* TrackingRequstCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingRequstCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,11 +105,13 @@
 				B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */,
 				B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */,
 				5B14587420318DF000B58BA4 /* FriendsViewController.swift */,
-				B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */,
 				B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */,
+				B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */,
+				B4A21A6E2073A1AC00731C9E /* GroupRequstTableViewCell.swift */,
 				B43048A120653B4D00AD0E33 /* NewGroupViewController.swift */,
 				B43048A320653D2600AD0E33 /* FriendAddToGroupCell.swift */,
 				B49BE5E520519B810040440B /* ChatViewController.swift */,
+				B4A21A722073CD9F00731C9E /* TrackingRequstCell.swift */,
 				5B1458782034087C00B58BA4 /* Data.swift */,
 				B49BE5E72051AF140040440B /* MassageTableViewCell.swift */,
 				5B14587A20345C8E00B58BA4 /* UserCell.swift */,
@@ -344,9 +350,11 @@
 			files = (
 				5B14587C20345C8E00B58BA4 /* UserCell.swift in Sources */,
 				5B25D748202613280065282B /* ViewController.swift in Sources */,
+				B4A21A6F2073A1AC00731C9E /* GroupRequstTableViewCell.swift in Sources */,
 				B42C3AAC20481EA3005C44D1 /* FriendRequstTableViewCell.swift in Sources */,
 				B42C3AAE2048440A005C44D1 /* FriendTableViewCell.swift in Sources */,
 				5B14587520318DF000B58BA4 /* FriendsViewController.swift in Sources */,
+				B4A21A732073CD9F00731C9E /* TrackingRequstCell.swift in Sources */,
 				B42D6FDF204036D400CB0FDC /* addFriendTableViewCell.swift in Sources */,
 				B43048A420653D2600AD0E33 /* FriendAddToGroupCell.swift in Sources */,
 				B42D6FDD2040315600CB0FDC /* AddFriendViewController.swift in Sources */,
