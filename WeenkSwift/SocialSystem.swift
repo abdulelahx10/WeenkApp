@@ -139,7 +139,7 @@ class SocialSystem {
         let group = ["groupName": groupName,
                      "admin": CURRENT_USER_ID,
                      "chatId": ref.key]
-        ref.child(ref.key).setValue(group)
+        ref.setValue(group)
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
         return ref.key

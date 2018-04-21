@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7DF50D202F34FD80818D4C1F8EF5BA4B"
+               BlueprintIdentifier = "E85E2BA1A8B0D3AA13C777A59D59A117"
                BlueprintName = "MapboxMobileEvents"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "MapboxMobileEvents.framework">

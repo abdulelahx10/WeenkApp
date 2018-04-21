@@ -12,6 +12,7 @@ class TrackingRequstCell: UITableViewCell {
 
      weak var delegate:TrackingRequstCellDelegate?
     
+   
     @IBOutlet weak var requstLabel: UILabel!
     
     @IBAction func didTapAccept(_ sender: Any) {

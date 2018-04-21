@@ -600,7 +600,7 @@ open class RouteStep: NSObject, NSSecureCoding {
         self.instructionsSpokenAlongStep = voiceInstructionsJSON?.map { SpokenInstruction(json: $0) }
         
         let instructionsDisplayedAlongStep = json["bannerInstructions"] as? [JSONDictionary]
-        self.instructionsDisplayedAlongStep = instructionsDisplayedAlongStep?.map { VisualInstruction(json: $0) }
+        self.instructionsDisplayedAlongStep = instructionsDisplayedAlongStep?.map { VisualInstruction(json: $0, drivingSide: drivingSide) }
         
         initialHeading = maneuver["bearing_before"] as? Double
         self.finalHeading = finalHeading
@@ -646,7 +646,7 @@ open class RouteStep: NSObject, NSSecureCoding {
     public required init?(coder decoder: NSCoder) {
         let coordinateDictionaries = decoder.decodeObject(of: [NSArray.self, NSDictionary.self, NSString.self, NSNumber.self], forKey: "coordinates") as? [[String: CLLocationDegrees]]
 		
-        coordinates = coordinateDictionaries?.flatMap({ (coordinateDictionary) -> CLLocationCoordinate2D? in
+        coordinates = coordinateDictionaries?.compactMap({ (coordinateDictionary) -> CLLocationCoordinate2D? in
             if let latitude = coordinateDictionary["latitude"], let longitude = coordinateDictionary["longitude"] {
                 return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             } else {
@@ -1032,7 +1032,7 @@ internal class RouteStepV4: RouteStep {
         let maneuverType = ManeuverType(v4Description: maneuver["type"] as! String) ?? .none
         let maneuverDirection = ManeuverDirection(v4TypeDescription: maneuver["type"] as! String) ?? .none
         let maneuverLocation = CLLocationCoordinate2D(geoJSON: maneuver["location"] as! JSONDictionary)
-        let drivingSide = DrivingSide(description: json["driving_side"] as! String) ?? .right
+        let drivingSide = DrivingSide(description: json["driving_side"] as? String ?? "") ?? .right
         let name = json["way_name"] as! String
         
         self.init(finalHeading: heading, maneuverType: maneuverType, maneuverDirection: maneuverDirection, drivingSide: drivingSide, maneuverLocation: maneuverLocation, name: name, coordinates: nil, json: json)

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7C31D0BDE4DE9278B6BD6CAD455C280E"
+               BlueprintIdentifier = "F2EA740F7DFFF25D496F592FD08D4E7B"
                BlueprintName = "Turf"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "Turf.framework">

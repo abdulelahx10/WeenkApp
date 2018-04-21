@@ -10,21 +10,23 @@ import UIKit
 import Firebase
 import Mapbox
 import ARCL
-import Motion
 import CoreLocation
+import Motion
 
-class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewDelegate , UITableViewDataSource{
+class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewDelegate , UITableViewDataSource ,MGLMapViewDelegate{
    
  
     fileprivate var _refHandle: DatabaseHandle!
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
     var user: User?
     var displayName = "Anonymous"
-    let locationManager = CLLocationManager()
+    var locationManager:CLLocationManager!
     
+    @IBOutlet weak var HeadingIndecator: UIButton!
     
     @IBOutlet weak var mapView: MGLMapView!
-    @IBOutlet weak var arView: SceneLocationView! = SceneLocationView()
+    @IBOutlet weak var arView: SceneLocationView!  = SceneLocationView()
+    var isAR:Bool = false
     @IBOutlet weak var nameLabel: UILabel!
     
     @IBOutlet weak var dropDownTable: UITableView!
@@ -34,6 +36,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     
     var friendTrackingID : String!
     var nodeWithIDList : [String : LocationNode] = [:]
+    var arMarker : [UIImage] = [UIImage(named:"marker-1")!,UIImage(named:"marker-2")!,UIImage(named:"marker-3")!,UIImage(named:"marker-4")!]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,34 +45,52 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         
         dropDownTable.delegate = self
         dropDownTable.dataSource = self
+        dropDownTable.clipsToBounds = true
+        dropDownTable.layer.cornerRadius = 10
         dropDownTableHC.constant = 0
-        
-        arView.run()
-        
-        
-        
+    
         SocialSystem.system.addFriendObserver {
                 self.dropDownTable.reloadData()
-
        }
         
-   
+        locationManager = CLLocationManager()
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-        
+        mapView.delegate = self
         mapView.logoView.isHidden = true
         mapView.attributionButton.isHidden = true
-        
+        mapView.zoomLevel = 8
+        mapView.setCenter(CLLocationCoordinate2D(latitude: 45, longitude: -122), animated: true)
+        mapView.showsUserHeadingIndicator = true
         dropDownBtn.clipsToBounds = true
         dropDownBtn.layer.cornerRadius = 10
-     
-       
-        
-       
-    }
+        dropDownBtn.titleLabel?.textAlignment = NSTextAlignment.right
+        dropDownBtn.contentHorizontalAlignment = .right
     
+        
+        
+    }
+
+    @IBAction func indicatorClicked(_ sender: UIButton) {
+        
+        if mapView.userTrackingMode != .followWithHeading {
+            mapView.userTrackingMode = .followWithHeading
+            
+            sender.animate( .rotate(90))
+            sender.setImage(UIImage(named:"GPS-3"), for:.normal )
+            
+        } else {
+            mapView.resetNorth()
+            sender.animate( .rotate(-90))
+            sender.setImage(UIImage(named:"GPS-1"), for:.normal )
+
+
+        }
+        
+        
+    }
     func configureAuth() {
         
         // listen for changes in the authorization state
@@ -91,49 +112,55 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
             }
         }
     }
-
+    
+    @IBAction func ARclicked(_ sender: UIButton) {
+        
+        if !isAR {
+            arView.run()
+            mapView.zoomLevel = 12
+            mapView.animate(.translate(x: 120, y: 180, z: 1),.size(CGSize(width: 100, height: 100)), .corner(radius:(50)))
+            isAR = true
+            HeadingIndecator.isHidden = true
+            sender.setImage(#imageLiteral(resourceName: "AR-2"), for: .normal)
+        }else{
+            arView.pause()
+            mapView.animate(.translate(x:0, y: 0, z: 1), .size(CGSize(width: 375, height: 667)), .corner(radius:(0)))
+            mapView.zoomLevel = 6
+            sender.setImage(#imageLiteral(resourceName: "AR-1"), for: .normal)
+            HeadingIndecator.isHidden = false
+            isAR = false
+        }
+    }
     @IBAction func toAR(_ sender: UISwitch) {
         
         
         if sender.isOn {
-            arView.run()
             
-            mapView.zoomLevel = 12
-            mapView.animate(.translate(x: 120, y: 180, z: 1), .scale(x:0.2668,y:0.15,z:1), .corner(radius:(187.5  * 1.4)))
         }else{
-            arView.pause()
-            mapView.animate(.translate(x:0, y: 0, z: 1), .scale(x:1,y:1,z:1), .corner(radius:(0)))
-            mapView.zoomLevel = 6
+            
         }
         
     }
-    
-    
+
     @IBAction func selectTracking(_ sender: UIButton) {
         
         UIView.animate(withDuration: 0.5) {
             if !self.dropDownIsDropped {
-                
-                self.dropDownTableHC.constant = CGFloat(44.0 * 5.0)
+                self.dropDownTableHC.constant = CGFloat(46.0 * Double(SocialSystem.system.friendList.count))
                 self.dropDownIsDropped = true
             }else{
-                
                 self.dropDownTableHC.constant = 0
                 self.dropDownIsDropped = false
-                
             }
-           
             self.view.layoutIfNeeded()
         }
-        
-        
     }
     
     
     deinit {
         // set up what needs to be deinitialized when view is no longer being used
         Auth.auth().removeStateDidChangeListener(_authHandle)
-        arView.pause()
+  
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -164,14 +191,20 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
             cell?.textLabel?.text = SocialSystem.system.friendList[indexPath.row].name
         }
         
+        cell?.textLabel?.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        cell?.textLabel?.textAlignment = NSTextAlignment.right
+        cell?.backgroundView?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
+        cell?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
         return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        
         tableView.deselectRow(at: indexPath, animated: true)
         
-        dropDownBtn.setTitle("    Tracking: \(SocialSystem.system.friendList[indexPath.row].name!)", for: .normal)
+        dropDownBtn.setTitle("     وين: \(SocialSystem.system.friendList[indexPath.row].name!)", for: .normal)
+        dropDownBtn.titleLabel?.textAlignment = NSTextAlignment.right
         UIView.animate(withDuration: 0.5) {
             
             self.dropDownTableHC.constant = 0
@@ -180,37 +213,32 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         }
         
         friendTrackingID = SocialSystem.system.friendList[indexPath.row].id
-        
-
-        
+       
         SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
             
+            let lat = Double(pos.latitude)
+            let lon = Double(pos.longitude)
+            let alt = Double(pos.altitude)
             if self.nodeWithIDList[self.friendTrackingID] != nil {
                 self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
             }
-            
-            var newNode = self.makeARmarker(latitude: String(pos.latitude), longitude: String(pos.longitude) , altitude: String(pos.altitude))
-            
+
+            let newNode = self.makeARmarker(latitude: lat, longitude: lon, altitude: alt)
+
             self.nodeWithIDList[self.friendTrackingID] = newNode
             self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
-            
         })
     }
     
-    func makeARmarker(latitude:String , longitude:String , altitude:String) -> LocationAnnotationNode {
+    func makeARmarker(latitude:Double , longitude:Double , altitude:Double) -> LocationAnnotationNode {
         
-        var lat = Double(latitude)
-        var lon = Double(longitude)
-        var alt = Double(altitude)
-        var coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
-        var location = CLLocation(coordinate: coordinate, altitude: alt!)
-        var image = UIImage(named: "location-pointer")!
-        var annotationNode = LocationAnnotationNode(location: location, image: image)
-        annotationNode.scaleRelativeToDistance = true
-        
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let location = CLLocation(coordinate: coordinate, altitude: altitude + 1.5
+        )
+        let annotationNode = LocationAnnotationNode(location: location, image:#imageLiteral(resourceName: "فيصل"))
         return annotationNode
     }
-
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -218,7 +246,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     }
     
     @IBAction func EnableLocation(_ sender: Any) {
-        locationManager.requestWhenInUseAuthorization()
+       
     }
     @IBAction func SignOut(_ sender: Any) {
         do {
@@ -230,3 +258,14 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     
 }
 
+extension UIImage{
+    convenience init(view: UIView) {
+        
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.isOpaque, 0.0)
+        view.drawHierarchy(in: view.bounds, afterScreenUpdates: false)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.init(cgImage: (image?.cgImage)!)
+        
+    }
+}
