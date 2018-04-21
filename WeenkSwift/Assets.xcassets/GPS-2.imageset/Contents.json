@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "marker-1.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "GPS-0.png",
       "scale" : "2x"
     },
     {

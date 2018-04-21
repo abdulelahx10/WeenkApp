@@ -26,6 +26,7 @@
 		B42C3AAE2048440A005C44D1 /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */; };
 		B42D6FDD2040315600CB0FDC /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */; };
 		B42D6FDF204036D400CB0FDC /* addFriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */; };
+		B42F57D2208A11EA00CB926E /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42F57D1208A11EA00CB926E /* MainViewController.swift */; };
 		B43048A220653B4D00AD0E33 /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43048A120653B4D00AD0E33 /* NewGroupViewController.swift */; };
 		B43048A420653D2600AD0E33 /* FriendAddToGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43048A320653D2600AD0E33 /* FriendAddToGroupCell.swift */; };
 		B49BE5E620519B820040440B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BE5E520519B810040440B /* ChatViewController.swift */; };
@@ -58,6 +59,7 @@
 		B42C3AAD2048440A005C44D1 /* FriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendTableViewCell.swift; sourceTree = "<group>"; };
 		B42D6FDC2040315600CB0FDC /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
 		B42D6FDE204036D400CB0FDC /* addFriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addFriendTableViewCell.swift; sourceTree = "<group>"; };
+		B42F57D1208A11EA00CB926E /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		B43048A120653B4D00AD0E33 /* NewGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
 		B43048A320653D2600AD0E33 /* FriendAddToGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendAddToGroupCell.swift; sourceTree = "<group>"; };
 		B49BE5E520519B810040440B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				5B25D745202613280065282B /* AppDelegate.swift */,
+				B42F57D1208A11EA00CB926E /* MainViewController.swift */,
 				5B25D747202613280065282B /* ViewController.swift */,
 				5BC944A6202F8F2A00B29D0A /* ARViewController.swift */,
 				5BBC6456202F18B100D7FA3B /* SignInViewController.swift */,
@@ -366,6 +369,7 @@
 				B49BE5E82051AF140040440B /* MassageTableViewCell.swift in Sources */,
 				5BC944A7202F8F2A00B29D0A /* ARViewController.swift in Sources */,
 				5B1458792034087C00B58BA4 /* Data.swift in Sources */,
+				B42F57D2208A11EA00CB926E /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +503,7 @@
 			baseConfigurationReference = 56355E1779D474FA94D4AEC2 /* Pods-Weenk.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W7YP9VNEHY;
 				INFOPLIST_FILE = "$(SRCROOT)/WeenkSwift/Info.plist";
@@ -506,6 +511,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.etar.Weenk.ar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -516,6 +522,7 @@
 			baseConfigurationReference = B4036B583934A0B257F3EDCE /* Pods-Weenk.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W7YP9VNEHY;
 				INFOPLIST_FILE = "$(SRCROOT)/WeenkSwift/Info.plist";
@@ -523,6 +530,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.etar.Weenk.ar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

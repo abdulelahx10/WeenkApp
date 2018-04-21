@@ -10,7 +10,8 @@ class SocialSystem {
     // MARK: - Firebase references
     /** The base Firebase reference */
     let BASE_REF = Database.database().reference()
-    
+    /** The locations Firebase reference */
+    let LOCATIONS_REF = Database.database().reference().child("locations")
     /* The user Firebase reference */
     let USERS_REF = Database.database().reference().child("users")
     /* The group Firebase reference */
@@ -26,8 +27,8 @@ class SocialSystem {
     }
     
     /** The GeoFire object */
-    var GEOFIRE: GeoFire {
-        return GeoFire(firebaseRef: BASE_REF)
+    var GEOFIRE_OBJ: GeoFire {
+        return GeoFire(firebaseRef: Database.database().reference().child("GeoFireLocations"))
     }
     
     /** The Firebase reference to the current user's friend tree */
@@ -40,8 +41,13 @@ class SocialSystem {
         return CURRENT_USER_REF.child("groups")
     }
     
+    /** The Firebase reference to the current user's tracking requests tree */
+    var CURRENT_USER_TRACK_REQUEST_REF: DatabaseReference {
+        return CURRENT_USER_REF.child("trackRequests")
+    }
+    
     /** The Firebase reference to the current user's accepted tracking tree */
-    var CURRENT_USER_ACCEPTED_REF: DatabaseReference {
+    var CURRENT_USER_ACCEPTED_TRACK_REF: DatabaseReference {
         return CURRENT_USER_REF.child("acceptedTracking")
     }
     
@@ -115,6 +121,15 @@ class SocialSystem {
             
         })
     }
+    /** Gets the zone object for the specified zone id */
+    func getZone(_ groupID: String,_ zoneID: String, completion: @escaping (ZoneData) -> Void) {
+        GROUPS_REF.child(groupID).child("zones").child(zoneID).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+            let lat = snapshot.childSnapshot(forPath: "latitude").value as! Double
+            let long = snapshot.childSnapshot(forPath: "longitude").value as! Double
+            let rad = snapshot.childSnapshot(forPath: "radius").value as! Double
+            completion(ZoneData(latitude: lat, longitude: long, radius: rad))
+        })
+    }
     
     // MARK: - System Functions
     
@@ -128,6 +143,14 @@ class SocialSystem {
         CURRENT_USER_GROUPS_REF.child(ref.key).setValue(true)
         CHATS_REF.child(ref.key)
         return ref.key
+    }
+    
+    /** Create a zone for the group */
+    func createZone(ForGroupID groupID: String, Latitude lat: Double, Longitude long: Double, Radius rad: Double) {
+        let zone = ["latitude": lat,
+                    "longitude": long,
+                    "radius": rad]
+        GROUPS_REF.child(groupID).child("zones").childByAutoId().setValue(zone)
     }
     
     /** Sends a friend request to the user with the specified id */
@@ -268,7 +291,7 @@ class SocialSystem {
     }
     
     /** update postition in the database */
-    func updatePosition(lat latitude: String, long longitude: String, alti altitude: String) -> Void {
+    func updatePosition(lat latitude: Double, long longitude: Double, alti altitude: Double) -> Void {
         // get the current date and time
         let currentDateTime = Date()
         
@@ -283,19 +306,19 @@ class SocialSystem {
         let pos = ["latitude": latitude,
                    "longitude": longitude,
                    "altitude": altitude,
-                   "lastUpdatedDate": date]
-
-        CURRENT_USER_REF.child("position").setValue(pos)
-        GEOFIRE.setLocation(CLLocation(latitude: Double(latitude)!, longitude: Double(longitude)!), forKey: CURRENT_USER_ID)
+                   "lastUpdatedDate": date] as [String : Any]
+        
+        GEOFIRE_OBJ.setLocation(CLLocation(latitude: latitude, longitude: longitude), forKey: CURRENT_USER_ID)
+        LOCATIONS_REF.child(CURRENT_USER_ID).setValue(pos)
     }
     
     // MARK: - postition
     /** get postition from the database */
     func getUserPositionObserver(ForUserID userID: String, completion: @escaping (PositionData) -> Void) {
-        USERS_REF.child(userID).child("position").observe(DataEventType.value, with: { (snapshot) in
-            let lat = snapshot.childSnapshot(forPath: "latitude").value as! String
-            let long = snapshot.childSnapshot(forPath: "longitude").value as! String
-            let alti = snapshot.childSnapshot(forPath: "altitude").value as! String
+        LOCATIONS_REF.child(userID).observe(DataEventType.value, with: { (snapshot) in
+            let lat = snapshot.childSnapshot(forPath: "latitude").value as! Double
+            let long = snapshot.childSnapshot(forPath: "longitude").value as! Double
+            let alti = snapshot.childSnapshot(forPath: "altitude").value as! Double
             let date = snapshot.childSnapshot(forPath: "lastUpdatedDate").value as! String
             completion(PositionData(latitude: lat, longitude: long, altitude: alti,  date: date))
         })
@@ -305,25 +328,44 @@ class SocialSystem {
         USERS_REF.removeAllObservers()
     }
     
+    // MARK: - All tracking requests
+    /** The list of all tracking requests users ID */
+    var trackingRequestIDList = [String]()
+    /** Adds a tracking requests user observer. The completion function will run every time this list changes, allowing you
+     to update your UI. */
+    func addTrackingRequestObserver(_ update: @escaping () -> Void) {
+        CURRENT_USER_TRACK_REQUEST_REF.observe(DataEventType.value, with: { (snapshot) in
+            self.trackingRequestIDList.removeAll()
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let id = child.key
+                self.trackingRequestIDList.append(id)
+            }
+            update()
+        })
+    }
+    /** Removes the Tracking requests observer. This should be done when leaving the view that uses the observer. */
+    func removeTrackingRequestObserver() {
+        CURRENT_USER_TRACK_REQUEST_REF.removeAllObservers()
+    }
 
     // MARK: - All Accepted tracking users
     /** The list of all Accepted tracking users ID */
-    var AcceptedTrackingUserIDList = [String]()
+    var acceptedTrackingUserIDList = [String]()
     /** Adds a Accepted tracking user observer. The completion function will run every time this list changes, allowing you
      to update your UI. */
     func addAcceptedTrackingUserObserver(_ update: @escaping () -> Void) {
-        CURRENT_USER_ACCEPTED_REF.observe(DataEventType.value, with: { (snapshot) in
-            self.AcceptedTrackingUserIDList.removeAll()
+        CURRENT_USER_ACCEPTED_TRACK_REF.observe(DataEventType.value, with: { (snapshot) in
+            self.acceptedTrackingUserIDList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                self.AcceptedTrackingUserIDList.append(id)
+                self.acceptedTrackingUserIDList.append(id)
             }
             update()
         })
     }
     /** Removes the Accepted user observer. This should be done when leaving the view that uses the observer. */
     func removeAcceptedUserObserver() {
-        CURRENT_USER_ACCEPTED_REF.removeAllObservers()
+        CURRENT_USER_ACCEPTED_TRACK_REF.removeAllObservers()
     }
     
     
@@ -593,8 +635,49 @@ class SocialSystem {
             }
         })
     }
-    /** Removes the message request observer. This should be done when leaving the view that uses the observer. */
+    /** Removes the message observer. This should be done when leaving the view that uses the observer. */
     func removeMessageObserver() {
         CHATS_REF.removeAllObservers()
     }
+
+    // MARK: - All zones from group ID
+    /** The list of all zones from group ID. */
+    var zonesList = [ZoneData]()
+    /** Adds a zone observer. The completion function will run every time this list changes, allowing you
+     to update your UI. */
+    func addZoneObserver(FromGroupID groupID: String, update: @escaping () -> Void) {
+        GROUPS_REF.child(groupID).child("zones").observe(DataEventType.value, with: { (snapshot) in
+            self.zonesList.removeAll()
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let id = child.key
+                self.group.enter()
+                self.getZone(groupID, id, completion: { (zone) in
+                    self.zonesList.append(zone)
+                    self.group.leave()
+                })
+            }
+            self.group.notify(queue: .main) {
+                update()
+            }
+        })
+    }
+    /** Removes the zone observer. This should be done when leaving the view that uses the observer. */
+    func removeZoneObserver() {
+        GROUPS_REF.removeAllObservers()
+    }
+    
+    /** get postition from the database */
+    func getUsersExitedZoneObserver(ForGroupID groupID: String, Latitude lat: Double, Longitude long: Double, Radius rad: Double, completion: @escaping (UserData) -> Void) {
+        let circleQuery = GEOFIRE_OBJ.query(at: CLLocation(latitude: lat, longitude: long), withRadius: rad)
+        circleQuery.observe(.keyExited) { (UserIdKey, location) in
+            self.GROUPS_REF.child(groupID).child("members").observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+                if snapshot.hasChild(UserIdKey) {
+                    self.getUser(UserIdKey, completion: { (user) in
+                        completion(user)
+                    })
+                }
+            })
+        }
+    }
+    
 }

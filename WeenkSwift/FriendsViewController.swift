@@ -32,9 +32,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         tableView.dataSource = self
         
       
-        SocialSystem.system.addFriendObserver {
-            self.tableView.reloadData()
-        }
+        
         
         SocialSystem.system.addFriendRequestObserver {
             self.tableView.reloadData()

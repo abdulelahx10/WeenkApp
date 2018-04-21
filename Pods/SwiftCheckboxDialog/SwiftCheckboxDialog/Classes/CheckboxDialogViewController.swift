@@ -14,8 +14,6 @@ public typealias TranslationTuple = (name: String, translated: String)
 public typealias TranslationDictionary = [String : String]
 
 
-
-
 public enum DialogCheckboxViewEnum {
     case countries
 }
@@ -55,7 +53,6 @@ open class CheckboxDialogViewController: UIViewController, UITableViewDelegate, 
         print("\(type(of: self)) did load")
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.black.withAlphaComponent(0.1) // color to represent dialog as modal view
-        
         temporarySelectedValues = defaultValues // this is important because we need initial data if we select Cancel after rotation (rotation causes issues because of reusing cells)
         selectedValues.removeAll(keepingCapacity: false) //empty selected values
         selectedValues = tuplesToDictionary(tuples: temporarySelectedValues!) //preselect columns that we loaded from user defaults
@@ -76,9 +73,7 @@ open class CheckboxDialogViewController: UIViewController, UITableViewDelegate, 
         self.delegateDialogTableView?.onCheckboxPickerValueChange(self.componentName!, values: self.selectedValues)
         self.dismiss(animated: false, completion: nil)
     }
-    
-  
-    
+
     func showDialogView() {
         createDialogView()
         createTitleView()
@@ -89,8 +84,7 @@ open class CheckboxDialogViewController: UIViewController, UITableViewDelegate, 
         createStackView()
         self.view.layoutIfNeeded()
     }
-    
-    
+
     func createDialogView() {
         dialogView = UIView()
         dialogView.layer.borderWidth = 1
