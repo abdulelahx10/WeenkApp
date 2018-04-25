@@ -14,6 +14,13 @@ class AddZoneViewController: UIViewController , MGLMapViewDelegate , UITextField
     @IBOutlet weak var radiusTextField: UITextField!
     var currentZone : MGLCircleStyleLayer!
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Show the navigation bar on other view controllers
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

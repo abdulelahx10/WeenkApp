@@ -31,7 +31,6 @@ class NewGroupViewController: UIViewController , UITableViewDelegate , UITableVi
         memTable.reloadData()
     }
     
-    
     var normalMemlist:[memData] = []
     var childMemlsit:[memData] = []
     var checkBoxDialog : CheckboxDialogViewController!
