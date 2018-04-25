@@ -33,10 +33,23 @@
 		B49BE5E82051AF140040440B /* MassageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BE5E72051AF140040440B /* MassageTableViewCell.swift */; };
 		B4A21A6F2073A1AC00731C9E /* GroupRequstTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A21A6E2073A1AC00731C9E /* GroupRequstTableViewCell.swift */; };
 		B4A21A732073CD9F00731C9E /* TrackingRequstCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A21A722073CD9F00731C9E /* TrackingRequstCell.swift */; };
+		B4D6B7062090890C00D5738B /* WeenkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D6B7052090890C00D5738B /* WeenkTests.swift */; };
+		F1C210CBAC80301EB9A0645E /* Pods_WeenkTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 789B1D97A27C62761DA90698 /* Pods_WeenkTests.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B4D6B7082090890C00D5738B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B25D73A202613280065282B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B25D741202613280065282B;
+			remoteInfo = Weenk;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3630B2F1DB44B9354EA3AA25 /* Pods_Weenk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Weenk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		365EC0AEDFF45E1FD32B6FE8 /* Pods-WeenkTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeenkTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-WeenkTests/Pods-WeenkTests.release.xcconfig"; sourceTree = "<group>"; };
 		56355E1779D474FA94D4AEC2 /* Pods-Weenk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Weenk.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Weenk/Pods-Weenk.debug.xcconfig"; sourceTree = "<group>"; };
 		5B14587420318DF000B58BA4 /* FriendsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsViewController.swift; sourceTree = "<group>"; };
 		5B1458762034076B00B58BA4 /* SocialSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialSystem.swift; sourceTree = "<group>"; };
@@ -53,6 +66,7 @@
 		5BBC6454202DB92600D7FA3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5BBC6456202F18B100D7FA3B /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		5BC944A6202F8F2A00B29D0A /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
+		789B1D97A27C62761DA90698 /* Pods_WeenkTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WeenkTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4036B583934A0B257F3EDCE /* Pods-Weenk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Weenk.release.xcconfig"; path = "Pods/Target Support Files/Pods-Weenk/Pods-Weenk.release.xcconfig"; sourceTree = "<group>"; };
 		B4236D16208235AF00C90C00 /* AddZoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddZoneViewController.swift; sourceTree = "<group>"; };
 		B42C3AAB20481EA3005C44D1 /* FriendRequstTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequstTableViewCell.swift; sourceTree = "<group>"; };
@@ -66,6 +80,10 @@
 		B49BE5E72051AF140040440B /* MassageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MassageTableViewCell.swift; sourceTree = "<group>"; };
 		B4A21A6E2073A1AC00731C9E /* GroupRequstTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupRequstTableViewCell.swift; sourceTree = "<group>"; };
 		B4A21A722073CD9F00731C9E /* TrackingRequstCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingRequstCell.swift; sourceTree = "<group>"; };
+		B4D6B7032090890C00D5738B /* WeenkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeenkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4D6B7052090890C00D5738B /* WeenkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeenkTests.swift; sourceTree = "<group>"; };
+		B4D6B7072090890C00D5738B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E7A40A7395742EF1F5E43503 /* Pods-WeenkTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeenkTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WeenkTests/Pods-WeenkTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +95,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B4D6B7002090890C00D5738B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1C210CBAC80301EB9A0645E /* Pods_WeenkTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -84,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				5B25D744202613280065282B /* WeenkSwift */,
+				B4D6B7042090890C00D5738B /* WeenkTests */,
 				5B25D743202613280065282B /* Products */,
 				D9285D1258CC3309F808AFCE /* Pods */,
 				880A25B8092AE4E7E80D441A /* Frameworks */,
@@ -94,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				5B25D742202613280065282B /* Weenk.app */,
+				B4D6B7032090890C00D5738B /* WeenkTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -151,8 +179,18 @@
 			isa = PBXGroup;
 			children = (
 				3630B2F1DB44B9354EA3AA25 /* Pods_Weenk.framework */,
+				789B1D97A27C62761DA90698 /* Pods_WeenkTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B4D6B7042090890C00D5738B /* WeenkTests */ = {
+			isa = PBXGroup;
+			children = (
+				B4D6B7052090890C00D5738B /* WeenkTests.swift */,
+				B4D6B7072090890C00D5738B /* Info.plist */,
+			);
+			path = WeenkTests;
 			sourceTree = "<group>";
 		};
 		D9285D1258CC3309F808AFCE /* Pods */ = {
@@ -160,6 +198,8 @@
 			children = (
 				56355E1779D474FA94D4AEC2 /* Pods-Weenk.debug.xcconfig */,
 				B4036B583934A0B257F3EDCE /* Pods-Weenk.release.xcconfig */,
+				E7A40A7395742EF1F5E43503 /* Pods-WeenkTests.debug.xcconfig */,
+				365EC0AEDFF45E1FD32B6FE8 /* Pods-WeenkTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -187,19 +227,45 @@
 			productReference = 5B25D742202613280065282B /* Weenk.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B4D6B7022090890C00D5738B /* WeenkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B4D6B70C2090890D00D5738B /* Build configuration list for PBXNativeTarget "WeenkTests" */;
+			buildPhases = (
+				CB963B08617838481586E1E1 /* [CP] Check Pods Manifest.lock */,
+				B4D6B6FF2090890C00D5738B /* Sources */,
+				B4D6B7002090890C00D5738B /* Frameworks */,
+				B4D6B7012090890C00D5738B /* Resources */,
+				586FA8D97053A5E618BD3871 /* [CP] Embed Pods Frameworks */,
+				FEABA281511C4452198AAAF6 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B4D6B7092090890C00D5738B /* PBXTargetDependency */,
+			);
+			name = WeenkTests;
+			productName = WeenkTests;
+			productReference = B4D6B7032090890C00D5738B /* WeenkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		5B25D73A202613280065282B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0920;
+				LastSwiftUpdateCheck = 0930;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = ETAR;
 				TargetAttributes = {
 					5B25D741202613280065282B = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+					};
+					B4D6B7022090890C00D5738B = {
+						CreatedOnToolsVersion = 9.3;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 5B25D741202613280065282B;
 					};
 				};
 			};
@@ -217,6 +283,7 @@
 			projectRoot = "";
 			targets = (
 				5B25D741202613280065282B /* Weenk */,
+				B4D6B7022090890C00D5738B /* WeenkTests */,
 			);
 		};
 /* End PBXProject section */
@@ -234,9 +301,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B4D6B7012090890C00D5738B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		586FA8D97053A5E618BD3871 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WeenkTests/Pods-WeenkTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		73615B2D978CAE4C460B0D9F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -343,6 +432,39 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Weenk/Pods-Weenk-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		CB963B08617838481586E1E1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WeenkTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FEABA281511C4452198AAAF6 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WeenkTests/Pods-WeenkTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -373,7 +495,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B4D6B6FF2090890C00D5738B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B4D6B7062090890C00D5738B /* WeenkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B4D6B7092090890C00D5738B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B25D741202613280065282B /* Weenk */;
+			targetProxy = B4D6B7082090890C00D5738B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		5B25D749202613280065282B /* Main.storyboard */ = {
@@ -536,6 +674,42 @@
 			};
 			name = Release;
 		};
+		B4D6B70A2090890C00D5738B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E7A40A7395742EF1F5E43503 /* Pods-WeenkTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = WeenkTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = test.WeenkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Weenk.app/Weenk";
+			};
+			name = Debug;
+		};
+		B4D6B70B2090890C00D5738B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 365EC0AEDFF45E1FD32B6FE8 /* Pods-WeenkTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = WeenkTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = test.WeenkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Weenk.app/Weenk";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -553,6 +727,15 @@
 			buildConfigurations = (
 				5B25D755202613290065282B /* Debug */,
 				5B25D756202613290065282B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B4D6B70C2090890D00D5738B /* Build configuration list for PBXNativeTarget "WeenkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B4D6B70A2090890C00D5738B /* Debug */,
+				B4D6B70B2090890C00D5738B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
