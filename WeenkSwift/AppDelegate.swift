@@ -23,18 +23,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // configure the Firebase
         FirebaseApp.configure()
         
-        let key = Bundle.main.object(forInfoDictionaryKey: "i5bDeQDmtDhRZPCDK5MOpkwrK"),
-        secret = Bundle.main.object(forInfoDictionaryKey: "Adpkozl854jyEyEiw4Z589WR6wLG6WwOUSygBQFakfqJ0S0UK7")
-        if let key = key as? String, let secret = secret as? String, !key.isEmpty && !secret.isEmpty {
-            TWTRTwitter.sharedInstance().start(withConsumerKey: key, consumerSecret: secret)
-        }
+        TWTRTwitter.sharedInstance().start(withConsumerKey: "i5bDeQDmtDhRZPCDK5MOpkwrK", consumerSecret: "Adpkozl854jyEyEiw4Z589WR6wLG6WwOUSygBQFakfqJ0S0UK7")
+        
         
         
         return true
     }
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        return FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication ?? "") ?? false
+        return FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication ?? "") ?? false 
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        return TWTRTwitter.sharedInstance().application(app, open: url, options: options)
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

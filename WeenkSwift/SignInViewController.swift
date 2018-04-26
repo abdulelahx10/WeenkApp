@@ -14,15 +14,27 @@ import FirebaseTwitterAuthUI
 
 class SignInViewController: UIViewController {
     
+    
+    @IBOutlet weak var Signin: UIButton!
+    @IBOutlet weak var weenkLogo: UIImageView!
+    
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
     var ref: DatabaseReference!
+    
+    
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
         let provider: [FUIAuthProvider] = [FUIGoogleAuth(), FUITwitterAuth()]
-        FUIAuth.defaultAuthUI()?.providers = provider
+//        Signin.isHidden=true
+        Signin.alpha = 0;
         
+        FUIAuth.defaultAuthUI()?.providers = provider
+        FUIAuth.defaultAuthUI()?.isSignInWithEmailHidden = true
+        IntroAnimation()
+        Signin.clipsToBounds = true
+        Signin.layer.cornerRadius = 30
         // Do any additional setup after loading the view.
     }
     
@@ -60,7 +72,30 @@ class SignInViewController: UIViewController {
         let authViewController = FUIAuth.defaultAuthUI()!.authViewController()
         self.present(authViewController, animated: true, completion: nil)
         }
-    
+   
+    func IntroAnimation(){
+        if UIScreen.main.nativeBounds.height == 2436 {
+            weenkLogo.animate(.delay(0.5),.scale(0.4), .translate(x: 0, y: -600, z: 0), .completion {
+                self.Signin.isHidden = false
+                self.Signin.transition(.fadeIn)
+                })
+            
+        }else{
+            weenkLogo.animate(.delay(0.5),.scale(0.4), .translate(x: 0, y: -400, z: 0), .completion {
+                //                self.Signin.isHidden = false
+                //                self.Signin.animate(.fadeIn, .delay(1))
+                // Move our fade out code from earlier
+                UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: {
+                    self.Signin.alpha = 1.0
+                }, completion: nil)
+                
+                
+                })
+            
+        }
+        
+        
+    }
     
     deinit {
         // set up what needs to be deinitialized when view is no longer being used

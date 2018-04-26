@@ -25,6 +25,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>twitterkit-i5bDeQDmtDhRZPCDK5MOpkwrK</string>
 				<string>com.googleusercontent.apps.1063671672709-aasua6uiuk3dih0iss1igruqng7poc40</string>
 			</array>
 		</dict>

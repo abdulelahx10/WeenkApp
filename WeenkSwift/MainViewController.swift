@@ -8,11 +8,17 @@
 
 import UIKit
 import Motion
+import Firebase
 
 class MainViewController: UIViewController , UIScrollViewDelegate {
 
     @IBOutlet var mapbutton: UIButton!
+    fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
+    var user: User?
+    var displayName = "Anonymous"
+
     
+    @IBOutlet var signoutbttn: UIButton!
     @IBOutlet var friendsbutton: UIButton!
     @IBOutlet var Scrollview: UIScrollView!
     //var storyboard = UIStoryboard(name: "Main", bundle: CFBundleGetMainBundle())
@@ -22,7 +28,7 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        configureAuth()
         Scrollview.delegate = self
         
         self.addChildViewController(v1)
@@ -47,6 +53,50 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
         
         
         // Do any additional setup after loading the view.
+    }
+    
+    func configureAuth() {
+        
+        // listen for changes in the authorization state
+        _authHandle = Auth.auth().addStateDidChangeListener { (auth: Auth, user: User?) in
+            
+            // check if there is a current user
+            if let activeUser = user {
+                // check if the current app user is the current FIRUser
+                if self.user != activeUser {
+                    self.user = activeUser
+                    let name = user!.displayName
+                    //let name = user!.email!.components(separatedBy: "@")[0]
+                    self.displayName = name!
+                    //self.nameLabel.text = self.displayName
+                }
+            } else {
+                // user must sign in
+                //self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
+                //self.view.window!.rootViewController?.dismiss(animated: true, completion: nil)
+                //ViewController.navigationController?.popToRootViewControllerAnimated(true)
+                //self.view.window!.rootViewController?.presentedViewController?.dismiss(animated: true, completion: nil)
+
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+
+    @IBAction func SignOut(_ sender: Any) {
+        let alert = UIAlertController(title: "Sign Out", message: "Are Sure?", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Yes", style:.default, handler: { (thisAlert) in
+            do {
+                try Auth.auth().signOut()
+            } catch {
+                print("unable to sign out: \(error)")
+            }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (thisAlert) in
+            ///
+        }))
+        self.present(alert, animated: true, completion: nil)
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -80,7 +130,14 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        
+        if (scrollView.contentOffset.x > v1.view.frame.origin.x){
+            
+            signoutbttn.isHidden = true
+            
+        }else{
+            signoutbttn.isHidden = false
+
+        }
         if (scrollView.contentOffset.x == v1.view.frame.origin.x){
             mapbutton.setImage(UIImage(named:"map-1"), for:.normal )
             friendsbutton.setImage(UIImage(named: "Friends-2"), for: .normal)
@@ -110,7 +167,11 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
         
         
     }
-    
+    deinit {
+        // set up what needs to be deinitialized when view is no longer being used
+        Auth.auth().removeStateDidChangeListener(_authHandle)
+        
+    }
     /*
      // MARK: - Navigation
      

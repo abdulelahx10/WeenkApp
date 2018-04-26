@@ -63,6 +63,9 @@ class SocialSystem {
     
     /** The current user's id */
     var CURRENT_USER_ID: String {
+        if Auth.auth().currentUser == nil {
+            return "NOTSIGNED"
+        }
         let id = Auth.auth().currentUser!.uid
         return id
     }
