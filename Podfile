@@ -3,10 +3,10 @@
 
 
 target 'Weenk' do
-  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
-  use_frameworks!
-
-  # Pods for Weenk
+    # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+    use_frameworks!
+    
+    # Pods for Weenk
     pod 'Firebase/Core'
     pod 'Firebase/Database'
     pod 'FirebaseUI/Database'
@@ -22,5 +22,8 @@ target 'Weenk' do
     pod 'TTGSnackbar'
     pod 'SwiftCheckboxDialog'
     pod 'GeoFire'
+    target 'WeenkTests' do
+        inherit! :search_paths
+    end
 end
 
