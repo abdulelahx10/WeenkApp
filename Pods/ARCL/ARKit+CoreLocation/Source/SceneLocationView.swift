@@ -205,6 +205,14 @@ public class SceneLocationView: ARSCNView, ARSCNViewDelegate {
         }
     }
     
+    public func removeAllNodes(){
+        for node in locationNodes{
+            if let index = locationNodes.index(of: node) {
+                locationNodes.remove(at: index)
+            }
+            node.removeFromParentNode()
+        }
+    }
     private func removeOldLocationEstimates(currentScenePosition: SCNVector3) {
         let currentPoint = CGPoint.pointWithVector(vector: currentScenePosition)
         

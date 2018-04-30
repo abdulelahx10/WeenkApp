@@ -11,14 +11,32 @@ import Motion
 import Firebase
 
 class MainViewController: UIViewController , UIScrollViewDelegate {
-
+   @IBOutlet var profilebttn: UIButton!
+    @IBOutlet weak var SidelMenuC: NSLayoutConstraint!
+    var sideMishidden = true
+    
+    @IBOutlet weak var sideMtap: UIButton!
+    
     @IBOutlet var mapbutton: UIButton!
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
     var user: User?
     var displayName = "Anonymous"
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Hide the navigation bar on the this view controller
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
     
-    @IBOutlet var signoutbttn: UIButton!
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Show the navigation bar on other view controllers
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+ 
     @IBOutlet var friendsbutton: UIButton!
     @IBOutlet var Scrollview: UIScrollView!
     //var storyboard = UIStoryboard(name: "Main", bundle: CFBundleGetMainBundle())
@@ -29,6 +47,13 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureAuth()
+        UINavigationBar.appearance().barTintColor = UIColor(red:0.00, green:0.71, blue:0.83, alpha:1.0)
+
+        //initiate profile bard and hid it from screen
+        SidelMenuC.constant = -180
+        //simple tap buton to hid the profile whenever the map tapped
+        sideMtap.isHidden = true
+        
         Scrollview.delegate = self
         
         self.addChildViewController(v1)
@@ -51,7 +76,7 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
         
         mapbutton.animate(.scale(2))
         
-        
+        self.automaticallyAdjustsScrollViewInsets = false;
         // Do any additional setup after loading the view.
     }
     
@@ -82,6 +107,33 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
         }
     }
 
+    @IBAction func closeProfileView(_ sender: UIButton) {
+        if (sideMishidden == false){
+            SidelMenuC.constant = -180
+            UIView.animate(withDuration: 0.2, animations: {
+                self.view.layoutIfNeeded()
+            })
+            sideMishidden = true
+            sideMtap.isHidden = true
+        }
+        
+        
+        
+    }
+    @IBAction func ProfileBtnClicked(_ sender: UIButton) {
+        
+        
+                if (sideMishidden == true){
+                SidelMenuC.constant = 0
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.view.layoutIfNeeded()
+                })
+        sideMishidden = false
+        sideMtap.isHidden = false
+        }
+        
+    }
+    
     @IBAction func SignOut(_ sender: Any) {
         let alert = UIAlertController(title: "Sign Out", message: "Are Sure?", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Yes", style:.default, handler: { (thisAlert) in
@@ -91,11 +143,12 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
                 print("unable to sign out: \(error)")
             }
         }))
-        
+
         alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (thisAlert) in
             ///
         }))
         self.present(alert, animated: true, completion: nil)
+
         
     }
     
@@ -130,12 +183,23 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
+        
+        if(scrollView.contentOffset.y > v1.view.frame.origin.y){
+            scrollView.contentOffset.y = v1.view.frame.origin.y
+            
+        }
+        if(scrollView.contentOffset.y > v2.view.frame.origin.y){
+            scrollView.contentOffset.y = v2.view.frame.origin.y
+        }
+        
         if (scrollView.contentOffset.x > v1.view.frame.origin.x){
             
-            signoutbttn.isHidden = true
+            profilebttn.isHidden = true
+            
+            
             
         }else{
-            signoutbttn.isHidden = false
+            profilebttn.isHidden = false
 
         }
         if (scrollView.contentOffset.x == v1.view.frame.origin.x){

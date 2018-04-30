@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import TTGSnackbar
 class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDataSource , UITextFieldDelegate , TrackingRequstCellDelegate{
    
     
@@ -19,23 +19,44 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
     @IBOutlet weak var massageView: UIView!
     @IBOutlet weak var userChatImage: UIImageView!
     @IBOutlet weak var messageTableView: UITableView!
+    @IBOutlet weak var sendMessage: UIButton!
+    var label : UILabel!
     
     var friendChatWith: UserData?
     var chatWithGroup: GroupData!
     override func viewDidLoad() {
         super.viewDidLoad()
+        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 10, width: 30, height: 30))
+        label = UILabel(frame: CGRect(x: 40, y: -2, width: 200, height: 50))
 
+        let image : UIImage = UIImage(named: "user1.png")!
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = image
+        label.text = ""
+
+        titleView.addSubview(imageView)
+        titleView.addSubview(label)
+        self.navigationItem.titleView = titleView
+
+        
+        // should it check if he taped on send
+        if !(sendMessage.isTouchInside){
+        self.hideKeyboardWhenTappedAround()
+            
+        }
+        
         messageTableView.delegate = self
         messageTableView.dataSource = self
         massageTextField.delegate = self
         
         if friendChatWith != nil {
-            userChatName.text = friendChatWith?.name
+            label.text = friendChatWith?.name
             SocialSystem.system.addMessageObserver(FromChatID:(friendChatWith?.fChatId)!) {
                 self.messageTableView.reloadData()
             }
         }else if chatWithGroup != nil {
-            userChatName.text = chatWithGroup?.groupName
+            label.text = chatWithGroup?.groupName
             SocialSystem.system.addMessageObserver(FromChatID:(chatWithGroup?.chatId)!) {
                 self.messageTableView.reloadData()
             }
@@ -43,14 +64,81 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
         configureTableView()
     }
     
+    deinit {
+        
+        if friendChatWith != nil {
+            label.text = friendChatWith?.name
+            SocialSystem.system.removeMessageObserver()
+
+        }else if chatWithGroup != nil {
+            label.text = chatWithGroup?.groupName
+            SocialSystem.system.removeMessageObserver()
+        }
+    }
+    
+
+
     func acceptTracking(_ sender: TrackingRequstCell) {
         guard let tappedIndexPath = messageTableView.indexPath(for: sender) else { return}
         SocialSystem.system.acceptTrackRequest(FromUserID:(friendChatWith?.id)!)
+        friendChatWith?.fIsTrackRequested = false
+        messageTableView.reloadData()
+        let snackbar = TTGSnackbar(message: "\(friendChatWith?.name!) Track you", duration: .short)
+        snackbar.show()
         print("accpted")
     }
+    @IBAction func kababMeun(_ sender: Any) {
+        
+        let sureAlert = UIAlertController(title: "Delete friend", message: "are you sure", preferredStyle: .alert)
+        
+        let yesAction = UIAlertAction(title: "yes", style: .default) { (action) in
+            SocialSystem.system.removeFriend(WithUserID: (self.friendChatWith?.id)!)
+            let snackbar = TTGSnackbar(message: " \(self.friendChatWith?.name) deleted", duration: .short)
+            snackbar.show()
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        let noAction = UIAlertAction(title: "no", style: .default) { (action) in
+            ///
+        }
+        
+        sureAlert.addAction(yesAction)
+        sureAlert.addAction(noAction)
+        
+        let alertController = UIAlertController(title: "Action Sheet", message: "What would you like to do?", preferredStyle: .actionSheet)
+        
+        let sendButton = UIAlertAction(title: "Send Tracking reqeust", style: .default, handler: { (action) -> Void in
+            
+            print("Send Tracking")
+        })
+        
+        let  deleteButton = UIAlertAction(title: "Delete", style: .default, handler: { (action) -> Void in
+           
+           self.present(sureAlert, animated: true, completion: nil)
+            print("Delete")
+        })
+        
     
+        
+        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) -> Void in
+            print("Cancel button tapped")
+        })
+        
+        
+        alertController.addAction(sendButton)
+        alertController.addAction(deleteButton)
+        alertController.addAction(cancelButton)
+        
+        self.navigationController!.present(alertController, animated: true, completion: nil)
+    }
+    
+    func backToFriendView(){
+        self.performSegue(withIdentifier: "backToFriend", sender: self)
+    }
     func rejectTracking(_ sender: TrackingRequstCell) {
         SocialSystem.system.rejectTrackRequest(FromUserID: (friendChatWith?.id)!)
+        friendChatWith?.fIsTrackRequested = false
+        messageTableView.reloadData()
         print("rejected")
     }
 
@@ -59,9 +147,6 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
         // Dispose of any resources that can be recreated.
     }
     
-    deinit {
-        SocialSystem.system.removeMessageObserver()
-    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -89,20 +174,26 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
             massage?.layer.cornerRadius = 10
             massage?.senderName.text = SocialSystem.system.messagesList[indexPath.row].sender
             massage?.massageText.text = SocialSystem.system.messagesList[indexPath.row].message
-            
+            massage?.selectionStyle = .none
             if SocialSystem.system.messagesList[indexPath.row].senderID != SocialSystem.system.CURRENT_USER_ID {
                 return massage!
             }else{
                 massage?.backgoundMassage.backgroundColor = UIColor.gray
                 massage?.massageText.textColor = UIColor.black
             }
+           
             return massage!
         case 1:
-            if (false) {
-                let trackingRequst = tableView.dequeueReusableCell(withIdentifier: "TrackingRequstCell") as? TrackingRequstCell
-                return trackingRequst!
+            if friendChatWith != nil{
+                if (friendChatWith?.fIsTrackRequested)! {
+                    let trackingRequst = tableView.dequeueReusableCell(withIdentifier: "TrackingRequstCell") as? TrackingRequstCell
+                    trackingRequst?.delegate = self
+                    return trackingRequst!
+                }else{
+                    return UITableViewCell()
+                }
             }else{
-                return UITableViewCell()
+                  return UITableViewCell()
             }
         default:
              return UITableViewCell()

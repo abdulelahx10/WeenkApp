@@ -42,7 +42,9 @@ class NewGroupViewController: UIViewController , UITableViewDelegate , UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        hideKeyboardWhenTappedAround()
+       
         SocialSystem.system.addFriendObserver {
             self.tableData = self.makeFriendListDialog()
         }
@@ -171,3 +173,4 @@ class NewGroupViewController: UIViewController , UITableViewDelegate , UITableVi
     */
 
 }
+

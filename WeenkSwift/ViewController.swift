@@ -50,10 +50,13 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         dropDownTable.clipsToBounds = true
         dropDownTable.layer.cornerRadius = 10
         dropDownTableHC.constant = 0
-    
-        SocialSystem.system.addFriendObserver {
-                self.dropDownTable.reloadData()
-       }
+        
+        SocialSystem.system.addAcceptedTrackingUserObserver {
+            self.dropDownTable.reloadData()
+        }
+        SocialSystem.system.addUserGroupsObserver2 {
+            self.dropDownTable.reloadData()
+        }
         
         locationManager = CLLocationManager()
         locationManager.delegate = self
@@ -79,7 +82,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
             self.view.addConstraint(co)
         }
         
-        
+//        self.hideKeyboardWhenTappedAround()
     }
     @objc func handleSingleTap(tap: UITapGestureRecognizer) {
     
@@ -195,10 +198,10 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
     }
 
     @IBAction func selectTracking(_ sender: UIButton) {
-        
+        arView.removeAllNodes()
         UIView.animate(withDuration: 0.5) {
             if !self.dropDownIsDropped {
-                self.dropDownTableHC.constant = CGFloat(46.0 * Double(SocialSystem.system.friendList.count))
+                self.dropDownTableHC.constant = CGFloat(46.0 * Double(SocialSystem.system.acceptedTrackingUserList.count + SocialSystem.system.userGroupdList2.count))
                 self.dropDownIsDropped = true
             }else{
                 self.dropDownTableHC.constant = 0
@@ -224,81 +227,178 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITableViewD
         print(error)
     }
     
-    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SocialSystem.system.friendList.count
+        
+        switch section {
+        case 0:
+            return SocialSystem.system.acceptedTrackingUserList.count
+        case 1:
+            return SocialSystem.system.userGroupdList2.count
+        default:
+            return -1
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCell(withIdentifier: "dropCell")
-        if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: "dropCell")
-        }
-        if SocialSystem.system.friendList.count != 0 {
-            cell?.textLabel?.text = SocialSystem.system.friendList[indexPath.row].name
+        switch indexPath.section {
+        case 0:
+            var cell = tableView.dequeueReusableCell(withIdentifier: "dropCell")
+            if cell == nil {
+                cell = UITableViewCell(style: .default, reuseIdentifier: "dropCell")
+            }
+            if SocialSystem.system.acceptedTrackingUserList.count != 0 {
+                cell?.textLabel?.text = SocialSystem.system.acceptedTrackingUserList[indexPath.row].name
+            }
+            
+            cell?.textLabel?.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            cell?.textLabel?.textAlignment = NSTextAlignment.right
+            cell?.backgroundView?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
+            cell?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
+            return cell!
+        case 1:
+            var cell = tableView.dequeueReusableCell(withIdentifier: "dropCell")
+            if cell == nil {
+                cell = UITableViewCell(style: .default, reuseIdentifier: "dropCell")
+            }
+            if SocialSystem.system.userGroupdList2.count != 0 {
+                cell?.textLabel?.text = SocialSystem.system.userGroupdList2[indexPath.row].groupName
+            }
+            
+            cell?.textLabel?.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            cell?.textLabel?.textAlignment = NSTextAlignment.right
+            cell?.backgroundView?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
+            cell?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
+            return cell!
+        default:
+            return UITableViewCell()
         }
         
-        cell?.textLabel?.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        cell?.textLabel?.textAlignment = NSTextAlignment.right
-        cell?.backgroundView?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
-        cell?.backgroundColor = UIColor(red: 0, green: 0.71, blue: 0.83, alpha: 1)
-        return cell!
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        dropDownBtn.setTitle("     وين: \(SocialSystem.system.friendList[indexPath.row].name!)", for: .normal)
-        dropDownBtn.titleLabel?.textAlignment = NSTextAlignment.right
-        UIView.animate(withDuration: 0.5) {
+        switch indexPath.section {
+        case 0:
             
-            self.dropDownTableHC.constant = 0
-            self.dropDownIsDropped = false
-            self.view.layoutIfNeeded()
-        }
-        
-        friendTrackingID = SocialSystem.system.friendList[indexPath.row].id
-       
-        SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
+            tableView.deselectRow(at: indexPath, animated: true)
             
+            dropDownBtn.setTitle("     وين: \(SocialSystem.system.acceptedTrackingUserList[indexPath.row].name!)", for: .normal)
+            dropDownBtn.titleLabel?.textAlignment = NSTextAlignment.right
+            UIView.animate(withDuration: 0.5) {
+                
+                self.dropDownTableHC.constant = 0
+                self.dropDownIsDropped = false
+                self.view.layoutIfNeeded()
+            }
             
-            //creating the marker and person details.
-            let marker = MGLPointAnnotation()
-            
-            
-            marker.coordinate = CLLocationCoordinate2D(latitude: pos.latitude, longitude: pos.longitude)
-            marker.title = SocialSystem.system.friendList[indexPath.row].name!
-            var cordinateTheMarker = CLLocation(latitude: pos.latitude, longitude: pos.longitude)
-            var distance = (self.locationManager.location?.distance(from: cordinateTheMarker))!
-            marker.subtitle = String(format: "%.3f km", distance/1000)
-            
-            
-            // send the marker to the map
-            if self.mapView.annotations?.capacity != nil{
-                self.mapView.removeAnnotations(self.mapView.annotations!)
+            friendTrackingID = SocialSystem.system.acceptedTrackingUserList[indexPath.row].id
+            SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
                 
                 
-            }
-            self.mapView.addAnnotation(marker)
-
-            let lat = Double(pos.latitude)
-            let lon = Double(pos.longitude)
-            let alt = Double(pos.altitude)
-            if self.nodeWithIDList[self.friendTrackingID] != nil {
-                self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
-            }
-            var locationChanger:Double = 0.001
-//            for _ in 0...1000{
-            
+                //creating the marker and person details.
+                let marker = MGLPointAnnotation()
+                
+                
+                marker.coordinate = CLLocationCoordinate2D(latitude: pos.latitude, longitude: pos.longitude)
+                marker.title = SocialSystem.system.acceptedTrackingUserList[indexPath.row].name!
+               
+                var cordinateTheMarker = CLLocation(latitude: pos.latitude, longitude: pos.longitude)
+                var distance = (self.locationManager.location?.distance(from: cordinateTheMarker))!
+                marker.subtitle = String(format: "%.3f km", distance/1000)
+                
+                
+                // send the marker to the map
+                if self.mapView.annotations?.capacity != nil{
+                    self.mapView.removeAnnotations(self.mapView.annotations!)
+                    
+                    
+                }
+                self.mapView.addAnnotation(marker)
+                
+                let lat = Double(pos.latitude)
+                let lon = Double(pos.longitude)
+                let alt = Double(pos.altitude)
+                if self.nodeWithIDList[self.friendTrackingID] != nil {
+                    self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
+                }
+                var locationChanger:Double = 0.001
+                //            for _ in 0...1000{
+                
                 let newNode = self.makeARmarker(latitude: lat + locationChanger, longitude: lon + locationChanger, altitude: alt)
                 self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
                 locationChanger += 0.001
-//            }
+                //            }
+                
+            })
+            break
+        case 1:
             
-        })
+            tableView.deselectRow(at: indexPath, animated: true)
+            
+            dropDownBtn.setTitle("     وين: \(SocialSystem.system.userGroupdList2[indexPath.row].groupName!)(مجموعة)", for: .normal)
+            dropDownBtn.titleLabel?.textAlignment = NSTextAlignment.right
+            UIView.animate(withDuration: 0.5) {
+                
+                self.dropDownTableHC.constant = 0
+                self.dropDownIsDropped = false
+                self.view.layoutIfNeeded()
+            }
+            SocialSystem.system.addMembersObserver(ForGroupID: SocialSystem.system.userGroupdList2[indexPath.row].id) {
+               SocialSystem.system.removeMembersObserver()
+                for user in SocialSystem.system.userGroupMembers {
+                    
+                    if user.id != SocialSystem.system.CURRENT_USER_ID{
+                        self.friendTrackingID = user.id
+                        SocialSystem.system.getUserPositionObserver(ForUserID: self.friendTrackingID, completion: { (pos) in
+                            
+                            
+                            //creating the marker and person details.
+                            let marker = MGLPointAnnotation()
+                            
+                            
+                            marker.coordinate = CLLocationCoordinate2D(latitude: pos.latitude, longitude: pos.longitude)
+                            marker.title = user.name!
+                            var cordinateTheMarker = CLLocation(latitude: pos.latitude, longitude: pos.longitude)
+                            var distance = (self.locationManager.location?.distance(from: cordinateTheMarker))!
+                            marker.subtitle = String(format: "%.3f km", distance/1000)
+                            
+                            
+                            // send the marker to the map
+                            if self.mapView.annotations?.capacity != nil{
+                                self.mapView.removeAnnotations(self.mapView.annotations!)
+                                
+                                
+                            }
+                            self.mapView.addAnnotation(marker)
+                            
+                            let lat = Double(pos.latitude)
+                            let lon = Double(pos.longitude)
+                            let alt = Double(pos.altitude)
+                            if self.nodeWithIDList[self.friendTrackingID] != nil {
+                                self.arView.removeLocationNode(locationNode: self.nodeWithIDList[self.friendTrackingID]!)
+                            }
+                            var locationChanger:Double = 0.001
+                            //            for _ in 0...1000{
+                            
+                            let newNode = self.makeARmarker(latitude: lat + locationChanger, longitude: lon + locationChanger, altitude: alt)
+                            self.arView.addLocationNodeWithConfirmedLocation(locationNode: newNode)
+                            locationChanger += 0.001
+                            //            }
+                            
+                        })
+                    }
+                }
+            }
+            break
+        default:
+            break
+            ///
+        }
     }
     
     func makeARmarker(latitude:Double , longitude:Double , altitude:Double) -> LocationAnnotationNode {
@@ -332,5 +432,20 @@ extension UIImage{
         UIGraphicsEndImageContext()
         self.init(cgImage: (image?.cgImage)!)
         
+    }
+}
+
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(UIViewController.dismissKeyboard))
+        
+        tap.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+       
+        self.view.endEditing(true)
     }
 }

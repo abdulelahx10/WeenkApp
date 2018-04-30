@@ -15,7 +15,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
 
 
     @IBOutlet weak var tableView: UITableView!
-    
+    var inFriendView : Bool = false
     @IBAction func NewGroup(_ sender: Any) {
         
 
@@ -31,13 +31,18 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         tableView.delegate = self
         tableView.dataSource = self
         
-      
-        
+      //making the tableview above the UItabbar bottons <3
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+        self.tableView.contentInset = insets
         
         SocialSystem.system.addFriendRequestObserver {
             self.tableView.reloadData()
         }
         
+        
+        SocialSystem.system.addFriendObserver {
+            self.tableView.reloadData()
+        }
         SocialSystem.system.addGroupRequestObserver {
             self.tableView.reloadData()
         }
@@ -107,6 +112,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             if SocialSystem.system.friendList[indexPath.row].fIsTrackRequested {
                 cell?.trackBtn.isEnabled = false
             }
+           
             return cell!
         
         case 1:
@@ -207,6 +213,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
         }else if indexPath.section == 1 {
              performSegue(withIdentifier: "chatWithFriend", sender: self)
         }
+            tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

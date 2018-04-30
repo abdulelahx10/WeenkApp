@@ -293,6 +293,12 @@ class SocialSystem {
         CURRENT_USER_REF.child("trackRequests").child(userID).removeValue()
     }
     
+    /** Remove a track request from the user with the specified id */
+    func removeAceptedTrack(FromUserID userID: String) {
+        CURRENT_USER_REF.child("acceptedTracking").child(userID).removeValue()
+        USERS_REF.child(userID).child("acceptedTracking").child(CURRENT_USER_ID).removeValue()
+    }
+    
     /** update postition in the database */
     func updatePosition(lat latitude: Double, long longitude: Double, alti altitude: Double) -> Void {
         // get the current date and time
@@ -353,17 +359,23 @@ class SocialSystem {
 
     // MARK: - All Accepted tracking users
     /** The list of all Accepted tracking users ID */
-    var acceptedTrackingUserIDList = [String]()
+    var acceptedTrackingUserList = [UserData]()
     /** Adds a Accepted tracking user observer. The completion function will run every time this list changes, allowing you
      to update your UI. */
     func addAcceptedTrackingUserObserver(_ update: @escaping () -> Void) {
         CURRENT_USER_ACCEPTED_TRACK_REF.observe(DataEventType.value, with: { (snapshot) in
-            self.acceptedTrackingUserIDList.removeAll()
+            self.acceptedTrackingUserList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
-                self.acceptedTrackingUserIDList.append(id)
+                self.group.enter()
+                self.getUser(id, completion: { (user) in
+                    self.acceptedTrackingUserList.append(user)
+                    self.group.leave()
+                })
             }
-            update()
+            self.group.notify(queue: .main) {
+                update()
+            }
         })
     }
     /** Removes the Accepted user observer. This should be done when leaving the view that uses the observer. */
@@ -416,9 +428,8 @@ class SocialSystem {
         USERS_REF.queryOrdered(byChild: "userNameLower").queryStarting(atValue: name.lowercased()).queryEnding(atValue: name.lowercased()+"\u{f8ff}").observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
             self.searchedUsersList.removeAll()
             for child in snapshot.children.allObjects as! [DataSnapshot] {
-                let email = child.childSnapshot(forPath: "email").value as! String
                 let id = child.key
-                if email != Auth.auth().currentUser?.email! {
+                if id != Auth.auth().currentUser?.uid {
                     self.group.enter()
                     self.getUser(id, completion: { (user) in
                         self.USERS_REF.child(id).child("friends").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -512,6 +523,27 @@ class SocialSystem {
                 self.group.enter()
                 self.getGroup(id, completion:  { (group) in
                     self.userGroupdList.append(group)
+                    self.group.leave()
+                })
+            }
+            self.group.notify(queue: .main) {
+                update()
+            }
+        })
+    }
+    // MARK: - All userGroups *2
+    /** The list of all groups of the current user. */
+    var userGroupdList2 = [GroupData]()
+    /** Adds a userGroups observer *2. The completion function will run every time this list changes, allowing you
+     to update your UI. */
+    func addUserGroupsObserver2(_ update: @escaping () -> Void) {
+        CURRENT_USER_GROUPS_REF.observe(DataEventType.value, with: { (snapshot) in
+            self.userGroupdList2.removeAll()
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let id = child.key
+                self.group.enter()
+                self.getGroup(id, completion:  { (group) in
+                    self.userGroupdList2.append(group)
                     self.group.leave()
                 })
             }
