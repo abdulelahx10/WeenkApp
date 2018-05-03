@@ -44,7 +44,7 @@ class NewGroupViewController: UIViewController , UITableViewDelegate , UITableVi
         super.viewDidLoad()
         
         hideKeyboardWhenTappedAround()
-       
+        
         SocialSystem.system.addFriendObserver {
             self.tableData = self.makeFriendListDialog()
         }
@@ -84,7 +84,7 @@ class NewGroupViewController: UIViewController , UITableViewDelegate , UITableVi
     func cleanTableData(tag:Int){
         
     }
-    @IBAction func CreateGroup(_ sender: UIButton) {
+    @IBAction func CreateGroup(_ sender: Any) {
         
         if normalMemlist.count + childMemlsit.count != 0 {
             let newGroupID = SocialSystem.system.createGroup(WithGroupName: groupNameTextField.text!)

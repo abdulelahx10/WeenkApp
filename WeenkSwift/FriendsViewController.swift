@@ -25,15 +25,23 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
 
-    
         
         tableView.delegate = self
         tableView.dataSource = self
         
       //making the tableview above the UItabbar bottons <3
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
-        self.tableView.contentInset = insets
+        
+        
+         if UIScreen.main.nativeBounds.height == 2436 {
+            let insets = UIEdgeInsets(top: 0, left: 0, bottom: 280, right: 0)
+            self.tableView.contentInset = insets
+        
+                        }else {let insets = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+                                self.tableView.contentInset = insets}
+        
+        
         
         SocialSystem.system.addFriendRequestObserver {
             self.tableView.reloadData()
@@ -97,6 +105,23 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         
+//        if()         {        // check if the user have an image or not
+//        do {
+//            // your img url
+//            let url = URL(string: "http://verona-api.municipiumstaging.it/system/images/image/image/22/app_1920_1280_4.jpg")
+//            //convert to data
+//            let data = try Data(contentsOf: url)
+//            // but the img in varible
+//            let userImage = UIImage(data: data)
+//            // do somthing to append the photo
+//        }
+//        catch{
+//            print(error)
+//        }
+//
+//        }
+        
+        
         switch (indexPath.section) {
         case 0:
             
@@ -108,10 +133,42 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
                 return UITableViewCell()
             }
             cell?.userName.text = SocialSystem.system.friendList[indexPath.row].name
-            cell?.delegate = self
+            cell?.userImage.image = UIImage(named:"user1")
+
+            
             if SocialSystem.system.friendList[indexPath.row].fIsTrackRequested {
                 cell?.trackBtn.isEnabled = false
             }
+            if SocialSystem.system.friendList[indexPath.row].fIsTracked {
+                cell?.trackBtn.isEnabled = false
+            }
+            if(!SocialSystem.system.friendList[indexPath.row].photoURL.isEmpty){        // check if the user have an image or not
+                DispatchQueue.global().async {
+                    // Create url from string address
+                    guard let url = URL(string: SocialSystem.system.friendList[indexPath.row].photoURL) else {
+                        return
+                    }
+                    // Create data from url (You can handle exeption with try-catch)
+                    guard let data = try? Data(contentsOf: url) else {
+                        return
+                    }
+                    // Create image from data
+                    guard let image = UIImage(data: data) else {
+                        return
+                    }
+                    // Perform on UI thread
+                    DispatchQueue.main.async {
+                        
+                        cell?.userImage.image = image
+                        cell?.userImage.layer.cornerRadius = (cell?.userImage.frame.size.width)!/2
+                        cell?.userImage.clipsToBounds = true
+                        /* Do some stuff with your imageView */
+                    }
+                }
+            }
+            
+            cell?.delegate = self
+
            
             return cell!
         
@@ -125,6 +182,7 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             cell?.userName.text = SocialSystem.system.userGroupdList[indexPath.row].groupName
             cell?.trackBtn.isEnabled = false
             cell?.trackBtn.isHidden = true
+            cell?.imageView?.image = UIImage(named:"Group")
             cell?.delegate = self
             
             return cell!
@@ -139,6 +197,28 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
                 return UITableViewCell()
             }
             cell?.userName.text = SocialSystem.system.friendRequestList[indexPath.row].name
+            
+            if(!SocialSystem.system.friendList[indexPath.row].photoURL.isEmpty){        // check if the user have an image or not
+                DispatchQueue.global().async {
+                    // Create url from string address
+                    guard let url = URL(string: SocialSystem.system.friendList[indexPath.row].photoURL) else {
+                        return
+                    }
+                    // Create data from url (You can handle exeption with try-catch)
+                    guard let data = try? Data(contentsOf: url) else {
+                        return
+                    }
+                    // Create image from data
+                    guard let image = UIImage(data: data) else {
+                        return
+                    }
+                    // Perform on UI thread
+                    DispatchQueue.main.async {
+                        cell?.userImage.image = image
+                        /* Do some stuff with your imageView */
+                    }
+                }
+            }
             cell?.delegate = self
             
             return cell!
@@ -152,7 +232,6 @@ class FriendsViewController: UIViewController , UITableViewDelegate , UITableVie
             }
             cell?.groupName.text = " \(SocialSystem.system.groupRequestList[indexPath.row].groupName)"
             cell?.delegate = self
-            
             return cell!
         default:
             return UITableViewCell()

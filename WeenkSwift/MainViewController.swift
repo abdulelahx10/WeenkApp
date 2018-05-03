@@ -16,6 +16,8 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
     var sideMishidden = true
     
     @IBOutlet weak var sideMtap: UIButton!
+    @IBOutlet weak var UserName: UILabel!
+    @IBOutlet weak var UserPic: UIImageView!
     
     @IBOutlet var mapbutton: UIButton!
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
@@ -47,8 +49,10 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureAuth()
+       
         UINavigationBar.appearance().barTintColor = UIColor(red:0.00, green:0.71, blue:0.83, alpha:1.0)
-
+        UINavigationBar.appearance().tintColor = UIColor(red:1, green:1, blue:1, alpha:1.0)
+        
         //initiate profile bard and hid it from screen
         SidelMenuC.constant = -180
         //simple tap buton to hid the profile whenever the map tapped
@@ -77,6 +81,33 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
         mapbutton.animate(.scale(2))
         
         self.automaticallyAdjustsScrollViewInsets = false;
+        
+        SocialSystem.system.getCurrentUserData { (currentUser) in
+            self.UserName.text = currentUser.name
+            if(!currentUser.photoURL.isEmpty){        // check if the user have an image or not
+                DispatchQueue.global().async {
+                    // Create url from string address
+                    guard let url = URL(string: currentUser.photoURL) else {
+                        return
+                    }
+                    // Create data from url (You can handle exeption with try-catch)
+                    guard let data = try? Data(contentsOf: url) else {
+                        return
+                    }
+                    // Create image from data
+                    guard let image = UIImage(data: data) else {
+                        return
+                    }
+                    // Perform on UI thread
+                    DispatchQueue.main.async {
+                        self.UserPic.image = image
+                        self.UserPic.layer.cornerRadius = (self.UserPic.frame.size.width)/2
+                         self.UserPic.clipsToBounds = true
+                        /* Do some stuff with your imageView */
+                    }
+                }
+            }
+        }
         // Do any additional setup after loading the view.
     }
     
@@ -106,7 +137,32 @@ class MainViewController: UIViewController , UIScrollViewDelegate {
             }
         }
     }
-
+    // TODO : but change the name here
+    @IBAction func EditeName(_ sender: UIButton) {
+        //UserName.text
+        var alert = UIAlertController(title: "Edit name", message: "Enter name:", preferredStyle: .alert)
+        var textField : UITextField
+        alert.addTextField { (nametext) in
+            nametext.text = self.UserName.text
+        }
+        let changeAction = UIAlertAction(title: "Edit", style: .default) { (action) in
+            SocialSystem.system.changeName(Name: alert.textFields![0].text!)
+            self.UserName.text = alert.textFields![0].text!
+            
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { (action) in
+            /////
+        }
+        
+        alert.addAction(changeAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true) {
+            ////
+        }
+    }
+    
+    
     @IBAction func closeProfileView(_ sender: UIButton) {
         if (sideMishidden == false){
             SidelMenuC.constant = -180

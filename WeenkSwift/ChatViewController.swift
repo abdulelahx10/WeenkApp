@@ -14,6 +14,7 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
    
  
     
+    @IBOutlet weak var tapButton: UIButton!
     @IBOutlet weak var massageTextField: UITextField!
     @IBOutlet weak var messageViewHC: NSLayoutConstraint!
     @IBOutlet weak var massageView: UIView!
@@ -21,15 +22,19 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
     @IBOutlet weak var messageTableView: UITableView!
     @IBOutlet weak var sendMessage: UIButton!
     var label : UILabel!
-    
+    var keyboardHeight : CGFloat?
     var friendChatWith: UserData?
     var chatWithGroup: GroupData!
     override func viewDidLoad() {
         super.viewDidLoad()
-        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 10, width: 30, height: 30))
-        label = UILabel(frame: CGRect(x: 40, y: -2, width: 200, height: 50))
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
 
+        
+        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 5, width: 30, height: 30))
+        label = UILabel(frame: CGRect(x: 40, y: -2, width: 200, height: 50))
+        label.textColor = UIColor(red:1, green:1, blue:1, alpha:1.0)
         let image : UIImage = UIImage(named: "user1.png")!
         imageView.contentMode = .scaleAspectFit
         imageView.image = image
@@ -37,14 +42,16 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
 
         titleView.addSubview(imageView)
         titleView.addSubview(label)
-        self.navigationItem.titleView = titleView
-
         
+        self.navigationItem.titleView = titleView
+        
+        
+
         // should it check if he taped on send
-        if !(sendMessage.isTouchInside){
-        self.hideKeyboardWhenTappedAround()
-            
-        }
+//        if !(sendMessage.isTouchInside){
+//        self.hideKeyboardWhenTappedAround()
+//
+//        }
         
         messageTableView.delegate = self
         messageTableView.dataSource = self
@@ -52,6 +59,34 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
         
         if friendChatWith != nil {
             label.text = friendChatWith?.name
+            if(!(friendChatWith?.photoURL.isEmpty)!){
+                DispatchQueue.global().async {
+                    
+                    // Create url from string address
+                    guard let url = URL(string: (self.friendChatWith?.photoURL)!) else {
+                        return
+                    }
+                    
+                    // Create data from url (You can handle exeption with try-catch)
+                    guard let data = try? Data(contentsOf: url) else {
+                        return
+                    }
+                    
+                    // Create image from data
+                    guard let image = UIImage(data: data) else {
+                        return
+                    }
+                    
+                    // Perform on UI thread
+                    DispatchQueue.main.async {
+                        imageView.image = image
+                        imageView.layer.cornerRadius = (imageView.frame.size.width)/2
+                        imageView.clipsToBounds = true
+                        /* Do some stuff with your imageView */
+                    }
+                }
+            }
+            
             SocialSystem.system.addMessageObserver(FromChatID:(friendChatWith?.fChatId)!) {
                 self.messageTableView.reloadData()
             }
@@ -76,8 +111,7 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
         }
     }
     
-
-
+   
     func acceptTracking(_ sender: TrackingRequstCell) {
         guard let tappedIndexPath = messageTableView.indexPath(for: sender) else { return}
         SocialSystem.system.acceptTrackRequest(FromUserID:(friendChatWith?.id)!)
@@ -112,7 +146,7 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
             print("Send Tracking")
         })
         
-        let  deleteButton = UIAlertAction(title: "Delete", style: .default, handler: { (action) -> Void in
+        let  deleteButton = UIAlertAction(title: "Remove", style: .destructive, handler: { (action) -> Void in
            
            self.present(sureAlert, animated: true, completion: nil)
             print("Delete")
@@ -212,22 +246,52 @@ class ChatViewController: UIViewController , UITableViewDelegate, UITableViewDat
         
         if friendChatWith != nil{
             SocialSystem.system.sendMessage(ToChatID: (friendChatWith?.fChatId)!, WithTheMessage: massageTextField.text!)
+            massageTextField.text = ""
         }else if chatWithGroup != nil {
             SocialSystem.system.sendMessage(ToChatID: (chatWithGroup?.chatId)!, WithTheMessage: massageTextField.text!)
+            massageTextField.text = ""
+
         }
         
     }
-    
+  
+    @IBAction func TaptoDismiss(_ sender: UIButton) {
+        
+        dismissKeyboard()
+        
+    }
+    @objc func keyboardWillShow(sender: NSNotification) {
+        if let userinfo = sender.userInfo {
+                keyboardHeight = (userinfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue.size.height
+            print("-=-=-=--==-==-=-=-=-")
+            print(keyboardHeight!)
+            UIView.animate(withDuration: 0.25) {
+                
+                
+                self.messageViewHC.constant =  self.keyboardHeight! + 50    //308
+                self.view.layoutIfNeeded()
+            }
+        }
+        
+//        keyboardHeight = 0
+//        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+//            let keyboardRectangle = keyboardFrame.cgRectValue
+//            keyboardHeight = keyboardRectangle.height
+//
+//        }
+    }
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
-        UIView.animate(withDuration: 0.5) {
-            self.messageViewHC.constant = 308
-            self.view.layoutIfNeeded()
-        }
+//        UIView.animate(withDuration: 0.25) {
+//
+//
+//            self.messageViewHC.constant =  self.keyboardHeight!//308
+//            self.view.layoutIfNeeded()
+//        }
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
        
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.25) {
             self.messageViewHC.constant = 50
             self.view.layoutIfNeeded()
         }

@@ -136,6 +136,12 @@ class SocialSystem {
     
     // MARK: - System Functions
     
+    /** Change current user name*/
+    func changeName(Name name: String) {
+        CURRENT_USER_REF.child("userName").setValue(name)
+        CURRENT_USER_REF.child("userNameLower").setValue(name.lowercased())
+    }
+    
     /** Create a Group and make current user the admin */
     func createGroup(WithGroupName groupName: String) -> String {
         let ref = GROUPS_REF.childByAutoId()

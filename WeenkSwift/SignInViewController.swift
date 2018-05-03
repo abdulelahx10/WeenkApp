@@ -47,8 +47,10 @@ class SignInViewController: UIViewController {
                 self.ref = Database.database().reference()
                 self.ref.child("users").observeSingleEvent(of: .value, with: { (snapshot) in
 
-                    self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName)
-                    self.ref.child("users").child(user!.uid).child("userNameLower").setValue(user?.displayName?.lowercased())
+                    if(!snapshot.childSnapshot(forPath: user!.uid).hasChildren()){
+                        self.ref.child("users").child(user!.uid).child("userName").setValue(user?.displayName)
+                        self.ref.child("users").child(user!.uid).child("userNameLower").setValue(user?.displayName?.lowercased())
+                    }
                     self.ref.child("users").child(user!.uid).child("email").setValue(user?.email)
                     if user?.photoURL != nil {
                         self.ref.child("users").child(user!.uid).child("photoURL").setValue(user?.photoURL?.absoluteString)
@@ -76,8 +78,10 @@ class SignInViewController: UIViewController {
     func IntroAnimation(){
         if UIScreen.main.nativeBounds.height == 2436 {
             weenkLogo.animate(.delay(0.5),.scale(0.4), .translate(x: 0, y: -600, z: 0), .completion {
-                self.Signin.isHidden = false
-                self.Signin.transition(.fadeIn)
+                UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: {
+                    self.Signin.alpha = 1.0
+                }, completion: nil)
+                
                 })
             
         }else{
